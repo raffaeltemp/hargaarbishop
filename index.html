@@ -6,14 +6,12 @@
   <title>ARBI SHOP - Official Price List</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- html2canvas for instant poster download -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -29,188 +27,169 @@
   </script>
   <style>
     body {
-      background: radial-gradient(circle at 50% 0%, #f0f7ff 0%, #f8fafc 100%);
+      background: radial-gradient(circle at 50% 0%, #f1f7fe 0%, #f8fafc 100%);
       min-height: 100vh;
     }
     .badge-garansi { background-color: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
     .badge-nogar { background-color: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
   </style>
 </head>
-<body class="text-slate-800 antialiased py-6 px-4 sm:px-6 pb-28">
+<body class="text-slate-800 antialiased py-4 px-3 sm:px-6 sm:py-6 pb-28">
 
-  <div class="max-w-2xl mx-auto">
+  <div class="max-w-xl mx-auto">
 
-    <!-- Top Action Bar -->
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-6 p-3 rounded-2xl bg-white/80 backdrop-blur border border-slate-200/80 shadow-sm">
-      <div class="flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Toko Buka • Fast Respon</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="downloadPoster()" id="btnDownload" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition active:scale-95">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i>
-          <span>Save Gambar (PNG)</span>
-        </button>
-        <button onclick="copyPriceList()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition active:scale-95">
-          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-          <span>Salin Teks</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- MAIN PRICELIST CARD (CANVAS DOWNLOAD) -->
-    <div id="priceCard" class="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden p-6 sm:p-8">
+    <!-- MAIN PRICELIST CARD -->
+    <div id="priceCard" class="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-slate-200/90 overflow-hidden p-4 sm:p-7">
       
       <!-- Brand Header -->
-      <div class="text-center pb-6 border-b border-slate-100">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/25 mb-3">
-          <i data-lucide="shopping-bag" class="w-7 h-7"></i>
+      <div class="text-center pb-4 sm:pb-6 border-b border-slate-100">
+        <div class="inline-flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-md shadow-blue-500/20 mb-2">
+          <i data-lucide="shopping-bag" class="w-6 h-6"></i>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">ARBI SHOP</h1>
-        <div class="inline-block mt-1 px-4 py-1 rounded-full bg-blue-50 border border-blue-200/60">
-          <p class="text-xs font-bold text-blue-700 tracking-widest uppercase">Official Price List Premium</p>
+        <h1 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900">ARBI SHOP</h1>
+        <div class="inline-block mt-1 px-3 py-0.5 rounded-full bg-blue-50 border border-blue-200/60">
+          <p class="text-[10px] sm:text-xs font-bold text-blue-700 tracking-wider uppercase">Official Price List Premium</p>
         </div>
-        <p class="text-xs text-slate-500 mt-2">Akun Premium & Legal • Proses Kilat • Terpercaya</p>
+        <p class="text-[11px] sm:text-xs text-slate-500 mt-1.5 font-medium">Akun Premium Berkualitas • Proses Kilat • Terpercaya</p>
       </div>
 
-      <!-- Quick Search & Filter -->
-      <div class="my-5 space-y-3" id="toolbarSection">
+      <!-- Quick Search & Category Filters -->
+      <div class="my-4 space-y-2.5">
         <div class="relative">
-          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input type="text" id="searchInput" oninput="filterItems()" placeholder="Cari layanan (Netflix, YouTube, Canva...)" class="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-slate-50/50">
+          <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="searchInput" oninput="filterItems()" placeholder="Cari layanan (Netflix, YouTube, Canva...)" class="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-slate-50/50">
         </div>
         
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-          <button onclick="setCategory('all')" class="cat-btn active px-3 py-1.5 rounded-lg font-semibold bg-blue-600 text-white transition">Semua</button>
-          <button onclick="setCategory('movie')" class="cat-btn px-3 py-1.5 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Film</button>
-          <button onclick="setCategory('music')" class="cat-btn px-3 py-1.5 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Musik</button>
-          <button onclick="setCategory('creative')" class="cat-btn px-3 py-1.5 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Editing</button>
-          <button onclick="setCategory('garansi')" class="cat-btn px-3 py-1.5 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Garansi</button>
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] no-scrollbar">
+          <button onclick="setCategory('all')" class="cat-btn active whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-blue-600 text-white transition">Semua</button>
+          <button onclick="setCategory('movie')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Film</button>
+          <button onclick="setCategory('music')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Musik</button>
+          <button onclick="setCategory('creative')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Editing</button>
+          <button onclick="setCategory('garansi')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Garansi</button>
+          <button onclick="setCategory('nogaransi')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Tanpa Garansi</button>
         </div>
       </div>
 
       <!-- Product List Items -->
-      <div id="productList" class="space-y-2.5">
+      <div id="productList" class="space-y-2">
         <!-- Rendered via JS -->
       </div>
 
       <!-- Footer Info -->
-      <div class="mt-6 pt-5 border-t border-dashed border-slate-200 text-center space-y-2">
-        <div class="flex items-center justify-center gap-4 text-xs font-semibold text-slate-600">
+      <div class="mt-5 pt-4 border-t border-dashed border-slate-200 text-center space-y-1.5">
+        <div class="flex items-center justify-center gap-3 text-[11px] font-semibold text-slate-600">
           <span class="inline-flex items-center gap-1 text-emerald-600">
-            <i data-lucide="shield-check" class="w-4 h-4"></i> Garansi Sesuai Durasi
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Garansi Sesuai Durasi
           </span>
           <span class="inline-flex items-center gap-1 text-blue-600">
-            <i data-lucide="zap" class="w-4 h-4"></i> Akun Legal & Cepat
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i> Akun Aman & Cepat
           </span>
         </div>
-        <p class="text-[11px] text-slate-400">Harga dapat berubah sewaktu-waktu sesuai ketentuan provider.</p>
+        <p class="text-[10px] text-slate-400">Harga dapat berubah sewaktu-waktu sesuai ketentuan provider.</p>
       </div>
 
     </div>
 
-    <div class="mt-4 text-center">
-      <p class="text-xs text-slate-400">© ARBI SHOP • All rights reserved</p>
+    <div class="mt-3 text-center">
+      <p class="text-[11px] text-slate-400">© ARBI SHOP • All rights reserved</p>
     </div>
 
   </div>
 
-  <!-- ================= FLOATING ACTION BUTTONS (MELAYANG) ================= -->
-  <div class="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2.5">
+  <!-- FLOATING ACTION BUTTONS (SLEEK & COMPACT) -->
+  <div class="fixed bottom-4 right-3 sm:right-5 z-40 flex flex-col items-end gap-2">
     
-    <!-- Floating Button 1: QRIS & Pembayaran -->
-    <button onclick="openPaymentModal()" class="group flex items-center gap-2 bg-white/95 backdrop-blur hover:bg-slate-50 text-slate-800 px-4 py-2.5 rounded-full shadow-lg border border-slate-200 transition-all transform hover:-translate-y-0.5 active:scale-95">
-      <span class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-        <i data-lucide="qr-code" class="w-4 h-4"></i>
+    <!-- Floating: QRIS & Rekening -->
+    <button onclick="openPaymentModal()" class="flex items-center gap-2 bg-white/95 backdrop-blur hover:bg-slate-50 text-slate-800 px-3.5 py-2 rounded-full shadow-md border border-slate-200 transition transform active:scale-95">
+      <span class="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+        <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
       </span>
       <div class="text-left">
-        <p class="text-[10px] text-slate-400 font-medium leading-none">Bayar Cepat</p>
-        <p class="text-xs font-bold text-slate-900 leading-tight">QRIS & Rekening</p>
+        <p class="text-[9px] text-slate-400 font-medium leading-none">Bayar Cepat</p>
+        <p class="text-[11px] font-bold text-slate-900 leading-tight">QRIS & Rekening</p>
       </div>
     </button>
 
-    <!-- Floating Button 2: WhatsApp Admin -->
-    <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20saya%20mau%20order" target="_blank" class="group flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-full shadow-xl shadow-emerald-600/30 transition-all transform hover:-translate-y-0.5 active:scale-95">
+    <!-- Floating: WhatsApp Admin -->
+    <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20saya%20mau%20order" target="_blank" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-full shadow-lg shadow-emerald-600/25 transition transform active:scale-95">
       <span class="relative flex items-center justify-center">
-        <i data-lucide="message-circle" class="w-5 h-5"></i>
-        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full animate-ping"></span>
-        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full"></span>
+        <i data-lucide="message-circle" class="w-4 h-4"></i>
+        <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-400 rounded-full animate-ping"></span>
+        <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-400 rounded-full"></span>
       </span>
-      <span class="text-xs sm:text-sm font-bold tracking-wide">Hubungi Admin</span>
+      <span class="text-xs font-bold tracking-wide">Hubungi Admin</span>
     </a>
   </div>
 
-  <!-- ================= MODAL / POPUP FLOATING METODE PEMBAYARAN ================= -->
-  <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 transition-opacity duration-300">
-    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all scale-95 duration-200" id="modalCard">
+  <!-- POPUP MODAL PEMBAYARAN (OPTIMAL UNTUK HP) -->
+  <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3.5 transition-opacity duration-300">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 overflow-hidden" id="modalCard">
       
       <!-- Modal Header -->
-      <div class="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-            <i data-lucide="wallet" class="w-5 h-5"></i>
+      <div class="flex items-center justify-between p-3.5 border-b border-slate-100 bg-slate-50/60">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <i data-lucide="wallet" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-sm font-bold text-slate-900 leading-tight">Metode Pembayaran</h3>
-            <p class="text-[11px] text-slate-400">QRIS & Transfer Bank Otomatis</p>
+            <h3 class="text-xs sm:text-sm font-bold text-slate-900 leading-tight">Metode Pembayaran</h3>
+            <p class="text-[10px] text-slate-400">QRIS, Transfer Bank & E-Wallet</p>
           </div>
         </div>
-        <button onclick="closePaymentModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
-          <i data-lucide="x" class="w-4 h-4"></i>
+        <button onclick="closePaymentModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
 
       <!-- Modal Body -->
-      <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
-        
+      <div class="p-3.5 space-y-3 max-h-[72vh] overflow-y-auto">
         <!-- Box QRIS -->
-        <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/60 text-center">
-          <div class="w-40 h-40 mx-auto bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-center mb-2.5">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ARBI-SHOP-QRIS" alt="QRIS Arbi Shop" class="w-full h-full object-contain">
+        <div class="p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 text-center">
+          <div class="w-32 h-32 mx-auto bg-white p-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center justify-center mb-1.5">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ARBI-SHOP-QRIS" alt="QRIS Arbi Shop" class="w-full h-full object-contain">
           </div>
           <span class="text-xs font-bold text-slate-800 block">QRIS All Payment</span>
-          <span class="text-[11px] text-slate-500 block">BCA, Dana, Gopay, OVO, ShopeePay, LinkAja</span>
-          <p class="text-[10px] text-slate-400 mt-1 italic">Klik & tahan barcode di HP untuk simpan gambar</p>
+          <span class="text-[10px] text-slate-500 block">BCA, Mandiri, BRI, GoPay, DANA, OVO, ShopeePay</span>
+          <p class="text-[9px] text-slate-400 mt-0.5 italic">Klik & tahan barcode di HP untuk simpan</p>
         </div>
 
-        <!-- Box Transfer Manual -->
-        <div class="space-y-2.5">
+        <!-- Box Transfer & E-Wallet -->
+        <div class="space-y-2">
           <!-- Bank BCA -->
-          <div class="p-3 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-between">
+          <div class="p-2.5 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-between">
             <div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5">
                 <span class="text-xs font-bold text-slate-800">Bank BCA</span>
-                <span class="text-[10px] text-slate-400 font-medium">A/N Raffael Arbi</span>
+                <span class="text-[9px] text-slate-400">A/N Raffael Arbi</span>
               </div>
-              <span class="font-mono text-sm font-semibold text-slate-700 tracking-wider">1234567890</span>
+              <span class="font-mono text-xs font-bold text-slate-700">5860434051</span>
             </div>
-            <button onclick="copyText('1234567890', 'Nomor rekening BCA disalin!')" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-bold transition active:scale-95">
+            <button onclick="copyText('5860434051', 'Nomor rekening BCA disalin!')" class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 text-[11px] font-bold transition active:scale-95">
               Salin
             </button>
           </div>
 
           <!-- E-Wallet -->
-          <div class="p-3 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-between">
+          <div class="p-2.5 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-between">
             <div>
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-slate-800">Dana / GoPay</span>
-                <span class="text-[10px] text-slate-400 font-medium">0857-0327-5372</span>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[11px] font-bold text-slate-800">GoPay / DANA / OVO / ShopeePay</span>
               </div>
-              <span class="font-mono text-sm font-semibold text-slate-700 tracking-wider">085703275372</span>
+              <span class="font-mono text-xs font-bold text-slate-700">0857-0327-5372</span>
             </div>
-            <button onclick="copyText('085703275372', 'Nomor E-Wallet disalin!')" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-bold transition active:scale-95">
+            <button onclick="copyText('085703275372', 'Nomor E-Wallet disalin!')" class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 text-[11px] font-bold transition active:scale-95">
               Salin
             </button>
           </div>
         </div>
 
-        <p class="text-[11px] text-slate-400 text-center italic">*Kirim bukti transfer ke WhatsApp setelah melakukan pembayaran.</p>
+        <p class="text-[10px] text-slate-400 text-center italic">*Kirim bukti transfer ke WhatsApp setelah melakukan pembayaran.</p>
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-4 border-t border-slate-100 bg-slate-50/50">
-        <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20saya%20sudah%20transfer" target="_blank" class="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition">
-          <i data-lucide="send" class="w-4 h-4"></i>
+      <div class="p-3 border-t border-slate-100 bg-slate-50/60">
+        <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20saya%20sudah%20transfer" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
           <span>Konfirmasi Pembayaran ke WA</span>
         </a>
       </div>
@@ -218,29 +197,29 @@
     </div>
   </div>
 
-  <!-- Toast Notif -->
-  <div id="toast" class="fixed bottom-24 right-5 bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 flex items-center gap-2 z-50">
-    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-    <span id="toastMsg">Teks berhasil disalin!</span>
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-20 right-4 bg-slate-900 text-white text-[11px] font-semibold px-3.5 py-2 rounded-xl shadow-xl opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 flex items-center gap-2 z-50">
+    <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+    <span id="toastMsg">Berhasil disalin!</span>
   </div>
 
   <script>
     const waNumber = "6285703275372";
     const products = [
-      { id: 1, name: "YouTube Premium", duration: "1 Bulan", price: "18K", type: "music", garansi: false, garansiText: "Tanpa Garansi", highlight: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>` },
-      { id: 2, name: "Netflix", duration: "1 Bulan", price: "38K", type: "movie", garansi: true, garansiText: "Garansi", highlight: true, iconBg: "bg-slate-900", iconSvg: `<svg class="w-4 h-4 fill-red-600" viewBox="0 0 24 24"><path d="M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z"/></svg>` },
-      { id: 3, name: "CapCut Pro", duration: "7 Hari", price: "11K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", iconBg: "bg-slate-800", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
-      { id: 4, name: "CapCut Pro", duration: "1 Bulan", price: "37K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", iconBg: "bg-slate-800", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
-      { id: 5, name: "Viu Premium", duration: "1 Tahun", price: "5K", type: "movie", garansi: false, garansiText: "Tanpa Garansi", iconBg: "bg-amber-500", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><text x="4" y="18" font-size="16" font-weight="bold" fill="white">V</text></svg>` },
-      { id: 6, name: "Canva Pro", duration: "1 Bulan", price: "5K", type: "creative", garansi: true, garansiText: "Garansi", iconBg: "bg-cyan-500", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#00c4cc"/><text x="7" y="16" font-size="14" font-weight="bold" fill="white" font-style="italic">C</text></svg>` },
-      { id: 7, name: "Prime Video", duration: "1 Bulan", price: "14K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-sky-600", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M3 17.5c4.5 2 9.5 2 14 0M18 16l3 2-1-3.5"/></svg>` },
-      { id: 8, name: "Vidio Platinum (Mobile)", duration: "1 Bulan", price: "35K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-rose-500", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M10 8l6 4-6 4V8z"/></svg>` },
-      { id: 9, name: "Vidio Platinum (All Device)", duration: "1 Bulan", price: "45K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-rose-600", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M4 6h16v10H4z M10 8l5 3-5 3z"/></svg>` },
-      { id: 10, name: "WeTV", duration: "1 Bulan", price: "30K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-orange-500", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>` },
-      { id: 11, name: "Apple Music (Android)", duration: "1 Bulan", price: "10K", type: "music", garansi: true, garansiText: "Garansi", iconBg: "bg-red-500", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>` },
-      { id: 12, name: "Spotify Premium", duration: "1 Bulan", price: "25K", type: "music", garansi: true, garansiText: "Garansi", iconBg: "bg-emerald-500", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10A10 10 0 0 0 12 2zm4.586 14.424a.623.623 0 0 1-.857.207c-2.348-1.434-5.304-1.758-8.786-.962a.625.625 0 1 1-.277-1.22c3.808-.871 7.077-.497 9.713 1.118a.625.625 0 0 1 .207.857zm1.225-2.723a.782.782 0 0 1-1.076.257c-2.688-1.652-6.785-2.131-9.965-1.166a.782.782 0 1 1-.454-1.498c3.633-1.103 8.147-.568 11.238 1.331a.782.782 0 0 1 .257 1.076zm.105-2.836C14.692 8.94 9.4 8.766 6.342 9.694a.937.937 0 1 1-.543-1.792c3.512-1.066 9.356-.862 13.09 1.356a.937.937 0 0 1-1.002 1.607z"/></svg>` },
-      { id: 13, name: "HBO Ultimate", duration: "1 Bulan", price: "55K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-violet-900", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><text x="2" y="17" font-size="11" font-weight="900" fill="white">HBO</text></svg>` },
-      { id: 14, name: "HBO Standard", duration: "1 Bulan", price: "25K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-indigo-900", iconSvg: `<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><text x="2" y="17" font-size="11" font-weight="900" fill="white">HBO</text></svg>` }
+      { id: 1, name: "YouTube Premium", duration: "1 Bulan", price: "18K", type: "music", garansi: false, garansiText: "Tanpa Garansi", highlight: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>` },
+      { id: 2, name: "Netflix", duration: "1 Bulan", price: "38K", type: "movie", garansi: true, garansiText: "Garansi", highlight: true, iconBg: "bg-slate-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-red-600" viewBox="0 0 24 24"><path d="M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z"/></svg>` },
+      { id: 3, name: "CapCut Pro", duration: "7 Hari", price: "11K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
+      { id: 4, name: "CapCut Pro", duration: "1 Bulan", price: "37K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
+      { id: 5, name: "Viu Premium", duration: "1 Tahun", price: "5K", type: "movie", garansi: false, garansiText: "Tanpa Garansi", iconBg: "bg-amber-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="5" y="17" font-size="14" font-weight="bold" fill="white">V</text></svg>` },
+      { id: 6, name: "Canva Pro", duration: "1 Bulan", price: "5K", type: "creative", garansi: true, garansiText: "Garansi", iconBg: "bg-cyan-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#00c4cc"/><text x="7" y="16" font-size="14" font-weight="bold" fill="white" font-style="italic">C</text></svg>` },
+      { id: 7, name: "Prime Video", duration: "1 Bulan", price: "14K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-sky-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M3 17.5c4.5 2 9.5 2 14 0M18 16l3 2-1-3.5"/></svg>` },
+      { id: 8, name: "Vidio Platinum (Mobile)", duration: "1 Bulan", price: "35K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-rose-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M10 8l6 4-6 4V8z"/></svg>` },
+      { id: 9, name: "Vidio Platinum (All Device)", duration: "1 Bulan", price: "45K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-rose-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M4 6h16v10H4z M10 8l5 3-5 3z"/></svg>` },
+      { id: 10, name: "WeTV", duration: "1 Bulan", price: "30K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-orange-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>` },
+      { id: 11, name: "Apple Music (Android)", duration: "1 Bulan", price: "10K", type: "music", garansi: true, garansiText: "Garansi", iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>` },
+      { id: 12, name: "Spotify Premium", duration: "1 Bulan", price: "25K", type: "music", garansi: true, garansiText: "Garansi", iconBg: "bg-emerald-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10A10 10 0 0 0 12 2zm4.586 14.424a.623.623 0 0 1-.857.207c-2.348-1.434-5.304-1.758-8.786-.962a.625.625 0 1 1-.277-1.22c3.808-.871 7.077-.497 9.713 1.118a.625.625 0 0 1 .207.857zm1.225-2.723a.782.782 0 0 1-1.076.257c-2.688-1.652-6.785-2.131-9.965-1.166a.782.782 0 1 1-.454-1.498c3.633-1.103 8.147-.568 11.238 1.331a.782.782 0 0 1 .257 1.076zm.105-2.836C14.692 8.94 9.4 8.766 6.342 9.694a.937.937 0 1 1-.543-1.792c3.512-1.066 9.356-.862 13.09 1.356a.937.937 0 0 1-1.002 1.607z"/></svg>` },
+      { id: 13, name: "HBO Ultimate", duration: "1 Bulan", price: "55K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-violet-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` },
+      { id: 14, name: "HBO Standard", duration: "1 Bulan", price: "25K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-indigo-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` }
     ];
 
     let currentCategory = 'all';
@@ -250,28 +229,29 @@
       listEl.innerHTML = '';
       items.forEach(item => {
         const row = document.createElement('div');
-        row.className = `flex items-center justify-between p-3.5 rounded-2xl border transition hover:shadow-md ${item.highlight ? 'bg-blue-50/40 border-blue-200' : 'bg-white border-slate-200/80'}`;
+        // Border & background 100% seragam untuk SEMUA produk
+        row.className = 'flex items-center justify-between p-2.5 sm:p-3 rounded-xl border border-slate-200/90 bg-white transition hover:border-slate-300 shadow-sm';
         const badgeClass = item.garansi ? 'badge-garansi' : 'badge-nogar';
         const msg = encodeURIComponent(`Halo Arbi Shop, saya mau order ${item.name} (${item.duration}) seharga ${item.price}`);
 
         row.innerHTML = `
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.iconBg}">
+          <div class="flex items-center gap-2.5 min-w-0 pr-2">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 ${item.iconBg}">
               ${item.iconSvg}
             </div>
-            <div>
-              <div class="flex items-center gap-1.5">
-                <h3 class="text-sm font-bold text-slate-900">${item.name}</h3>
-                ${item.highlight ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-600 text-white">HOT</span>' : ''}
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate">${item.name}</h3>
+                ${item.highlight ? '<span class="px-1 py-0.2 rounded text-[9px] font-bold bg-blue-600 text-white leading-none">HOT</span>' : ''}
               </div>
-              <p class="text-xs text-slate-500">${item.duration}</p>
+              <p class="text-[10px] sm:text-xs text-slate-400 font-medium">${item.duration}</p>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="font-mono text-base font-bold text-slate-900">${item.price}</span>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeClass}">${item.garansiText}</span>
-            <a href="https://wa.me/${waNumber}?text=${msg}" target="_blank" class="p-1.5 rounded-lg text-emerald-600 hover:bg-emerald-50 transition" title="Order via WA">
-              <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <span class="font-mono text-xs sm:text-sm font-bold text-slate-900">${item.price}</span>
+            <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full ${badgeClass} whitespace-nowrap">${item.garansiText}</span>
+            <a href="https://wa.me/${waNumber}?text=${msg}" target="_blank" class="p-1 rounded-lg text-emerald-600 hover:bg-emerald-50 transition" title="Order via WA">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </a>
           </div>
         `;
@@ -298,6 +278,7 @@
         if (!match) return false;
         if (currentCategory === 'all') return true;
         if (currentCategory === 'garansi') return p.garansi;
+        if (currentCategory === 'nogaransi') return !p.garansi;
         return p.type === currentCategory;
       });
       renderList(filtered);
@@ -305,38 +286,6 @@
 
     function copyText(str, msg) {
       navigator.clipboard.writeText(str).then(() => showToast(msg));
-    }
-
-    function copyPriceList() {
-      let t = "🛍️ *ARBI SHOP - OFFICIAL PRICE LIST*\n━━━━━━━━━━━━━━━━━━━━\n\n";
-      products.forEach(p => t += `• *${p.name}* (${p.duration}) : *${p.price}* [${p.garansiText}]\n`);
-      t += "\n━━━━━━━━━━━━━━━━━━━━\n⚡ Order via WA: 0857-0327-5372";
-      navigator.clipboard.writeText(t).then(() => showToast("Pricelist berhasil disalin!"));
-    }
-
-    function downloadPoster() {
-      const btn = document.getElementById('btnDownload');
-      const old = btn.innerHTML;
-      btn.innerHTML = `<span>Proses...</span>`;
-      document.getElementById('toolbarSection').style.display = 'none';
-
-      html2canvas(document.getElementById('priceCard'), { scale: 3, backgroundColor: '#ffffff' }).then(c => {
-        document.getElementById('toolbarSection').style.display = 'block';
-        btn.innerHTML = old;
-        lucide.createIcons();
-        const a = document.createElement('a');
-        a.download = 'ARBI-SHOP-PRICELIST.png';
-        a.href = c.toDataURL('image/png');
-        a.click();
-        showToast("Poster berhasil disimpan!");
-      });
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      document.getElementById('toastMsg').innerText = msg;
-      t.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
-      setTimeout(() => t.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2'), 2500);
     }
 
     function openPaymentModal() {
