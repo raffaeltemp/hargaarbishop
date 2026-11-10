@@ -96,9 +96,8 @@
 
   </div>
 
-  <!-- FLOATING ACTION BUTTONS (SLEEK & COMPACT) -->
+  <!-- FLOATING ACTION BUTTONS -->
   <div class="fixed bottom-4 right-3 sm:right-5 z-40 flex flex-col items-end gap-2">
-    
     <!-- Floating: QRIS & Rekening -->
     <button onclick="openPaymentModal()" class="flex items-center gap-2 bg-white/95 backdrop-blur hover:bg-slate-50 text-slate-800 px-3.5 py-2 rounded-full shadow-md border border-slate-200 transition transform active:scale-95">
       <span class="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
@@ -121,7 +120,7 @@
     </a>
   </div>
 
-  <!-- POPUP MODAL PEMBAYARAN (OPTIMAL UNTUK HP) -->
+  <!-- POPUP MODAL PEMBAYARAN -->
   <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3.5 transition-opacity duration-300">
     <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 overflow-hidden" id="modalCard">
       
@@ -142,15 +141,15 @@
       </div>
 
       <!-- Modal Body -->
-      <div class="p-3.5 space-y-3 max-h-[72vh] overflow-y-auto">
-        <!-- Box QRIS -->
+      <div class="p-3.5 space-y-3 max-h-[75vh] overflow-y-auto">
+        <!-- Box QRIS Asli -->
         <div class="p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 text-center">
-          <div class="w-32 h-32 mx-auto bg-white p-1.5 rounded-lg border border-slate-200 shadow-sm flex items-center justify-center mb-1.5">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ARBI-SHOP-QRIS" alt="QRIS Arbi Shop" class="w-full h-full object-contain">
+          <div class="max-w-[210px] mx-auto bg-white p-1 rounded-xl border border-slate-200 shadow-sm mb-2">
+            <img src="qris.jpg" alt="QRIS RaffaelArbi" class="w-full h-auto rounded-lg object-contain">
           </div>
           <span class="text-xs font-bold text-slate-800 block">QRIS All Payment</span>
           <span class="text-[10px] text-slate-500 block">BCA, Mandiri, BRI, GoPay, DANA, OVO, ShopeePay</span>
-          <p class="text-[9px] text-slate-400 mt-0.5 italic">Klik & tahan barcode di HP untuk simpan</p>
+          <p class="text-[9px] text-slate-400 mt-0.5 italic">Klik & tahan gambar di HP untuk simpan QRIS</p>
         </div>
 
         <!-- Box Transfer & E-Wallet -->
@@ -229,7 +228,6 @@
       listEl.innerHTML = '';
       items.forEach(item => {
         const row = document.createElement('div');
-        // Border & background 100% seragam untuk SEMUA produk
         row.className = 'flex items-center justify-between p-2.5 sm:p-3 rounded-xl border border-slate-200/90 bg-white transition hover:border-slate-300 shadow-sm';
         const badgeClass = item.garansi ? 'badge-garansi' : 'badge-nogar';
         const msg = encodeURIComponent(`Halo Arbi Shop, saya mau order ${item.name} (${item.duration}) seharga ${item.price}`);
