@@ -77,12 +77,15 @@
 
       <!-- Footer Info -->
       <div class="mt-5 pt-4 border-t border-dashed border-slate-200 text-center space-y-1.5">
-        <div class="flex items-center justify-center gap-3 text-[11px] font-semibold text-slate-600">
+        <div class="flex items-center justify-center gap-3 text-[11px] font-semibold text-slate-600 flex-wrap">
           <span class="inline-flex items-center gap-1 text-emerald-600">
             <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Garansi Sesuai Durasi
           </span>
           <span class="inline-flex items-center gap-1 text-blue-600">
             <i data-lucide="zap" class="w-3.5 h-3.5"></i> Akun Aman & Cepat
+          </span>
+          <span class="inline-flex items-center gap-1 text-amber-600">
+            <i data-lucide="info" class="w-3.5 h-3.5"></i> Tanyakan Stok Sebelum Transfer
           </span>
         </div>
         <p class="text-[10px] text-slate-400">Harga dapat berubah sewaktu-waktu sesuai ketentuan provider.</p>
@@ -110,7 +113,7 @@
     </button>
 
     <!-- Floating: WhatsApp Admin -->
-    <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20saya%20mau%20order" target="_blank" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-full shadow-lg shadow-emerald-600/25 transition transform active:scale-95">
+    <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20apakah%20stok%20akun%20masih%20tersedia?" target="_blank" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-full shadow-lg shadow-emerald-600/25 transition transform active:scale-95">
       <span class="relative flex items-center justify-center">
         <i data-lucide="message-circle" class="w-4 h-4"></i>
         <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-400 rounded-full animate-ping"></span>
@@ -142,6 +145,15 @@
 
       <!-- Modal Body -->
       <div class="p-3.5 space-y-3 max-h-[75vh] overflow-y-auto">
+        
+        <!-- Peringatan Stok Penting -->
+        <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start gap-2">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+          <p class="text-[11px] font-bold text-amber-800 leading-tight">
+            Wajib tanyakan stok akun ke WhatsApp sebelum melakukan transfer!
+          </p>
+        </div>
+
         <!-- Box QRIS Asli -->
         <div class="p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 text-center">
           <div class="max-w-[210px] mx-auto bg-white p-1 rounded-xl border border-slate-200 shadow-sm mb-2">
@@ -186,7 +198,7 @@
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-3 border-t border-slate-100 bg-slate-50/60">
+      <div class="p-3 border-t border-slate-100 bg-slate-50/60 space-y-1.5">
         <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20saya%20sudah%20transfer" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition">
           <i data-lucide="send" class="w-3.5 h-3.5"></i>
           <span>Konfirmasi Pembayaran ke WA</span>
@@ -204,6 +216,10 @@
 
   <script>
     const waNumber = "6285703275372";
+
+    // ==========================================
+    // AREA EDIT HARGA CEPAT (UBAH HARGA DI SINI)
+    // ==========================================
     const products = [
       { id: 1, name: "YouTube Premium", duration: "1 Bulan", price: "18K", type: "music", garansi: false, garansiText: "Tanpa Garansi", highlight: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>` },
       { id: 2, name: "Netflix", duration: "1 Bulan", price: "38K", type: "movie", garansi: true, garansiText: "Garansi", highlight: true, iconBg: "bg-slate-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-red-600" viewBox="0 0 24 24"><path d="M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z"/></svg>` },
@@ -230,7 +246,7 @@
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between p-2.5 sm:p-3 rounded-xl border border-slate-200/90 bg-white transition hover:border-slate-300 shadow-sm';
         const badgeClass = item.garansi ? 'badge-garansi' : 'badge-nogar';
-        const msg = encodeURIComponent(`Halo Arbi Shop, saya mau order ${item.name} (${item.duration}) seharga ${item.price}`);
+        const msg = encodeURIComponent(`Halo Arbi Shop, saya mau order ${item.name} (${item.duration}) seharga ${item.price}. Apakah stok masih ready?`);
 
         row.innerHTML = `
           <div class="flex items-center gap-2.5 min-w-0 pr-2">
