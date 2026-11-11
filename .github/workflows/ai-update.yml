@@ -1,0 +1,120 @@
+name: AI Website Updater
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  update-website:
+    # Hanya dijalankan jika issue dibuat oleh pemilik repo
+    if: github.actor == github.repository_owner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run AI Code Updater
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          python - << 'EOF'
+          import os
+          import json
+          import requests
+
+          api_key = os.environ.get("GEMINI_API_KEY")
+          title = os.environ.get("ISSUE_TITLE", "")
+          body = os.environ.get("ISSUE_BODY", "")
+          prompt = f"{title}\n{body}".strip()
+
+          if not api_key:
+              print("Error: GEMINI_API_KEY belum diset di GitHub Secrets!")
+              exit(1)
+
+          with open("index.html", "r", encoding="utf-8") as f:
+              current_html = f.read()
+
+          url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+          headers = {"Content-Type": "application/json"}
+
+          system_instruction = (
+              "Kamu adalah web developer frontend profesional untuk ARBI SHOP. "
+              "Tugasmu memodifikasi kode index.html sesuai instruksi permintaan.\n"
+              "ATURAN WAJIB:\n"
+              "1. Kembalikan HANYA kode HTML utuh dari <!DOCTYPE html> sampai </html>.\n"
+              "2. DILARANG menambahkan markdown backticks seperti ```html atau ```.\n"
+              "3. DILARANG menambahkan teks pengantar/penutup apa pun.\n"
+              "4. Pertahankan semua fitur JS, styling Tailwind, QRIS, link WA, dan modal agar tetap berfungsi normal."
+          )
+
+          payload = {
+              "contents": [{
+                  "parts": [{"text": f"KODE SAAT INI:\n{current_html}\n\nPERINTAH REVISI:\n{prompt}"}]
+              }],
+              "systemInstruction": {"parts": [{"text": system_instruction}]},
+              "generationConfig": {"temperature": 0.2}
+          }
+
+          resp = requests.post(url, headers=headers, json=payload)
+          if resp.status_code != 200:
+              print(f"Error Gemini API: {resp.text}")
+              exit(1)
+
+          res_data = resp.json()
+          new_code = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+          # Bersihkan markdown jika ada
+          if new_code.startswith("```html"):
+              new_code = new_code[7:]
+          elif new_code.startswith("```"):
+              new_code = new_code[3:]
+          if new_code.endswith("```"):
+              new_code = new_code[:-3]
+          new_code = new_code.strip()
+
+          if "<!DOCTYPE html>" in new_code and "</html>" in new_code.lower():
+              with open("index.html", "w", encoding="utf-8") as f:
+                  f.write(new_code)
+              print("index.html sukses diperbarui!")
+          else:
+              print("Output AI tidak valid.")
+              exit(1)
+          EOF
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --staged --quiet || (git commit -m "Auto-update via Issue: ${{ github.event.issue.title }}" && git push)
+
+      - name: Reply and Close Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '✅ **Website Berhasil Diperbarui!**\n\nPerubahan sudah otomatis di-commit ke `index.html` dan sedang di-deploy oleh Netlify ke [https://hargaarbishop.netlify.app/](https://hargaarbishop.netlify.app/)'
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
