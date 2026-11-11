@@ -4,15 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ARBI SHOP - Official Price List</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- html2canvas for instant poster download -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
@@ -40,12 +36,33 @@
 
   <div class="max-w-xl mx-auto">
 
+    <!-- BAR ADMIN (Hanya muncul saat Mode Admin aktif) -->
+    <div id="adminBar" class="hidden mb-3 p-3 rounded-2xl bg-slate-900 text-white shadow-xl border border-slate-700">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-xs font-bold tracking-wide uppercase">Mode Admin Aktif</span>
+        </div>
+        <button onclick="toggleAdminMode(false)" class="text-[11px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800">Tutup</button>
+      </div>
+      <p class="text-[11px] text-slate-300 mb-2.5">Ubah harga atau klik tombol <b>HOT / Garansi / Stok</b> langsung di daftar produk bawah, lalu klik Simpan.</p>
+      <div class="flex gap-2">
+        <button onclick="saveToGitHub()" id="btnSaveGithub" class="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow transition flex items-center justify-center gap-1.5">
+          <i data-lucide="save" class="w-3.5 h-3.5"></i>
+          <span id="btnSaveText">Simpan & Update Web (1 Detik)</span>
+        </button>
+        <button onclick="resetGithubToken()" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold" title="Ganti Token GitHub">
+          Token
+        </button>
+      </div>
+    </div>
+
     <!-- MAIN PRICELIST CARD -->
     <div id="priceCard" class="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-slate-200/90 overflow-hidden p-4 sm:p-7">
       
-      <!-- Brand Header -->
+      <!-- Brand Header (Ketuk 5x ikon tas untuk buka Admin Mode) -->
       <div class="text-center pb-4 sm:pb-6 border-b border-slate-100">
-        <div class="inline-flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-md shadow-blue-500/20 mb-2">
+        <div onclick="handleLogoTap()" class="cursor-pointer select-none inline-flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-md shadow-blue-500/20 mb-2 active:scale-90 transition">
           <i data-lucide="shopping-bag" class="w-6 h-6"></i>
         </div>
         <h1 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900">ARBI SHOP</h1>
@@ -55,9 +72,8 @@
         <p class="text-[11px] sm:text-xs text-slate-500 mt-1.5 font-medium">Akun Premium Berkualitas • Proses Kilat • Terpercaya</p>
       </div>
 
-      <!-- Quick Action Buttons (Baru di Atas Cari Layanan) -->
+      <!-- Quick Action Buttons -->
       <div id="topActionButtons" class="grid grid-cols-3 gap-2 mt-4 mb-3">
-        <!-- 1. Payment Method -->
         <button onclick="openPaymentModal()" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 hover:border-blue-200 text-slate-700 hover:text-blue-600 transition active:scale-95 group">
           <div class="w-6 h-6 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition">
             <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
@@ -65,7 +81,6 @@
           <span class="text-[10px] sm:text-[11px] font-bold text-center leading-tight">Payment Method</span>
         </button>
 
-        <!-- 2. Hubungi Admin -->
         <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20apakah%20stok%20akun%20masih%20tersedia?" target="_blank" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-200 text-slate-700 hover:text-emerald-600 transition active:scale-95 group">
           <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
             <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
@@ -73,7 +88,6 @@
           <span class="text-[10px] sm:text-[11px] font-bold text-center leading-tight">Hubungi Admin</span>
         </a>
 
-        <!-- 3. Download Pricelist -->
         <button onclick="downloadPoster()" id="btnDownload" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50 border border-slate-200/80 hover:border-indigo-200 text-slate-700 hover:text-indigo-600 transition active:scale-95 group">
           <div class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
@@ -90,19 +104,17 @@
         </div>
         
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] no-scrollbar">
-          <button onclick="setCategory('all')" class="cat-btn active whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-blue-600 text-white transition">Semua</button>
-          <button onclick="setCategory('movie')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Film</button>
-          <button onclick="setCategory('music')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Musik</button>
-          <button onclick="setCategory('creative')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Editing</button>
-          <button onclick="setCategory('garansi')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Garansi</button>
-          <button onclick="setCategory('nogaransi')" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Tanpa Garansi</button>
+          <button onclick="setCategory('all', event)" class="cat-btn active whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-blue-600 text-white transition">Semua</button>
+          <button onclick="setCategory('movie', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Film</button>
+          <button onclick="setCategory('music', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Musik</button>
+          <button onclick="setCategory('creative', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Editing</button>
+          <button onclick="setCategory('garansi', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Garansi</button>
+          <button onclick="setCategory('nogaransi', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Tanpa Garansi</button>
         </div>
       </div>
 
       <!-- Product List Items -->
-      <div id="productList" class="space-y-2">
-        <!-- Rendered via JS -->
-      </div>
+      <div id="productList" class="space-y-2"></div>
 
       <!-- Footer Info -->
       <div class="mt-5 pt-4 border-t border-dashed border-slate-200 text-center space-y-1.5">
@@ -130,7 +142,6 @@
 
   <!-- FLOATING ACTION BUTTONS -->
   <div class="fixed bottom-4 right-3 sm:right-5 z-40 flex flex-col items-end gap-2">
-    <!-- Floating: QRIS & Rekening -->
     <button onclick="openPaymentModal()" class="flex items-center gap-2 bg-white/95 backdrop-blur hover:bg-slate-50 text-slate-800 px-3.5 py-2 rounded-full shadow-md border border-slate-200 transition transform active:scale-95">
       <span class="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
         <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
@@ -141,7 +152,6 @@
       </div>
     </button>
 
-    <!-- Floating: WhatsApp Admin -->
     <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20apakah%20stok%20akun%20masih%20tersedia?" target="_blank" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-full shadow-lg shadow-emerald-600/25 transition transform active:scale-95">
       <span class="relative flex items-center justify-center">
         <i data-lucide="message-circle" class="w-4 h-4"></i>
@@ -155,8 +165,6 @@
   <!-- POPUP MODAL PEMBAYARAN -->
   <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3.5 transition-opacity duration-300">
     <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 overflow-hidden" id="modalCard">
-      
-      <!-- Modal Header -->
       <div class="flex items-center justify-between p-3.5 border-b border-slate-100 bg-slate-50/60">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -172,9 +180,7 @@
         </button>
       </div>
 
-      <!-- Modal Body -->
       <div class="p-3.5 space-y-3 max-h-[75vh] overflow-y-auto">
-        <!-- Peringatan Stok Penting -->
         <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start gap-2">
           <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
           <p class="text-[11px] font-bold text-amber-800 leading-tight">
@@ -182,7 +188,6 @@
           </p>
         </div>
 
-        <!-- Box QRIS Asli -->
         <div class="p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 text-center">
           <div class="max-w-[210px] mx-auto bg-white p-1 rounded-xl border border-slate-200 shadow-sm mb-2">
             <img src="qris.jpg" alt="QRIS RaffaelArbi" class="w-full h-auto rounded-lg object-contain">
@@ -192,9 +197,7 @@
           <p class="text-[9px] text-slate-400 mt-0.5 italic">Klik & tahan gambar di HP untuk simpan QRIS</p>
         </div>
 
-        <!-- Box Transfer & E-Wallet -->
         <div class="space-y-2">
-          <!-- Bank BCA -->
           <div class="p-2.5 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-between">
             <div>
               <div class="flex items-center gap-1.5">
@@ -208,7 +211,6 @@
             </button>
           </div>
 
-          <!-- E-Wallet -->
           <div class="p-2.5 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-between">
             <div>
               <div class="flex items-center gap-1.5">
@@ -225,14 +227,12 @@
         <p class="text-[10px] text-slate-400 text-center italic">*Kirim bukti transfer ke WhatsApp setelah melakukan pembayaran.</p>
       </div>
 
-      <!-- Modal Footer -->
       <div class="p-3 border-t border-slate-100 bg-slate-50/60 space-y-1.5">
         <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20saya%20sudah%20transfer" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition">
           <i data-lucide="send" class="w-3.5 h-3.5"></i>
           <span>Konfirmasi Pembayaran ke WA</span>
         </a>
       </div>
-
     </div>
   </div>
 
@@ -244,69 +244,203 @@
 
   <script>
     const waNumber = "6285703275372";
+    const GITHUB_OWNER = "raffaeltemp";
+    const GITHUB_REPO = "hargaarbishop";
+    const GITHUB_PATH = "index.html";
 
-    const products = [
-      { id: 1, name: "YouTube Premium", duration: "1 Bulan", price: "18K", type: "music", garansi: false, garansiText: "Tanpa Garansi", highlight: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>` },
-      { id: 2, name: "Netflix", duration: "1 Bulan", price: "38K", type: "movie", garansi: true, garansiText: "Garansi", highlight: true, iconBg: "bg-slate-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-red-600" viewBox="0 0 24 24"><path d="M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z"/></svg>` },
-      { id: 3, name: "CapCut Pro", duration: "7 Hari", price: "11K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
-      { id: 4, name: "CapCut Pro", duration: "1 Bulan", price: "37K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
-      { id: 5, name: "Viu Premium", duration: "1 Tahun", price: "5K", type: "movie", garansi: false, garansiText: "Tanpa Garansi", iconBg: "bg-amber-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="5" y="17" font-size="14" font-weight="bold" fill="white">V</text></svg>` },
-      { id: 6, name: "Canva Pro", duration: "1 Bulan", price: "5K", type: "creative", garansi: true, garansiText: "Garansi", iconBg: "bg-cyan-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#00c4cc"/><text x="7" y="16" font-size="14" font-weight="bold" fill="white" font-style="italic">C</text></svg>` },
-      { id: 7, name: "Prime Video", duration: "1 Bulan", price: "14K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-sky-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M3 17.5c4.5 2 9.5 2 14 0M18 16l3 2-1-3.5"/></svg>` },
-      { id: 8, name: "Vidio Platinum (Mobile)", duration: "1 Bulan", price: "35K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-rose-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M10 8l6 4-6 4V8z"/></svg>` },
-      { id: 9, name: "Vidio Platinum (All Device)", duration: "1 Bulan", price: "45K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-rose-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M4 6h16v10H4z M10 8l5 3-5 3z"/></svg>` },
-      { id: 10, name: "WeTV", duration: "1 Bulan", price: "30K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-orange-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>` },
-      { id: 11, name: "Apple Music (Android)", duration: "1 Bulan", price: "10K", type: "music", garansi: true, garansiText: "Garansi", iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>` },
-      { id: 12, name: "Spotify Premium", duration: "1 Bulan", price: "25K", type: "music", garansi: true, garansiText: "Garansi", iconBg: "bg-emerald-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10A10 10 0 0 0 12 2zm4.586 14.424a.623.623 0 0 1-.857.207c-2.348-1.434-5.304-1.758-8.786-.962a.625.625 0 1 1-.277-1.22c3.808-.871 7.077-.497 9.713 1.118a.625.625 0 0 1 .207.857zm1.225-2.723a.782.782 0 0 1-1.076.257c-2.688-1.652-6.785-2.131-9.965-1.166a.782.782 0 1 1-.454-1.498c3.633-1.103 8.147-.568 11.238 1.331a.782.782 0 0 1 .257 1.076zm.105-2.836C14.692 8.94 9.4 8.766 6.342 9.694a.937.937 0 1 1-.543-1.792c3.512-1.066 9.356-.862 13.09 1.356a.937.937 0 0 1-1.002 1.607z"/></svg>` },
-      { id: 13, name: "HBO Ultimate", duration: "1 Bulan", price: "55K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-violet-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` },
-      { id: 14, name: "HBO Standard", duration: "1 Bulan", price: "25K", type: "movie", garansi: true, garansiText: "Garansi", iconBg: "bg-indigo-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` }
+    /* PRODUCTS_START */
+    let products = [
+      { id: 1, name: "YouTube Premium", duration: "1 Bulan", price: "18K", type: "music", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>` },
+      { id: 2, name: "Netflix", duration: "1 Bulan", price: "38K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-slate-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-red-600" viewBox="0 0 24 24"><path d="M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z"/></svg>` },
+      { id: 3, name: "CapCut Pro", duration: "7 Hari", price: "11K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
+      { id: 4, name: "CapCut Pro", duration: "1 Bulan", price: "37K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
+      { id: 5, name: "Viu Premium", duration: "1 Tahun", price: "5K", type: "movie", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-amber-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="5" y="17" font-size="14" font-weight="bold" fill="white">V</text></svg>` },
+      { id: 6, name: "Canva Pro", duration: "1 Bulan", price: "5K", type: "creative", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-cyan-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#00c4cc"/><text x="7" y="16" font-size="14" font-weight="bold" fill="white" font-style="italic">C</text></svg>` },
+      { id: 7, name: "Prime Video", duration: "1 Bulan", price: "14K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-sky-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M3 17.5c4.5 2 9.5 2 14 0M18 16l3 2-1-3.5"/></svg>` },
+      { id: 8, name: "Vidio Platinum (Mobile)", duration: "1 Bulan", price: "35K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-rose-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M10 8l6 4-6 4V8z"/></svg>` },
+      { id: 9, name: "Vidio Platinum (All Device)", duration: "1 Bulan", price: "45K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-rose-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M4 6h16v10H4z M10 8l5 3-5 3z"/></svg>` },
+      { id: 10, name: "WeTV", duration: "1 Bulan", price: "30K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-orange-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>` },
+      { id: 11, name: "Apple Music (Android)", duration: "1 Bulan", price: "10K", type: "music", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>` },
+      { id: 12, name: "Spotify Premium", duration: "1 Bulan", price: "25K", type: "music", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-emerald-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10A10 10 0 0 0 12 2zm4.586 14.424a.623.623 0 0 1-.857.207c-2.348-1.434-5.304-1.758-8.786-.962a.625.625 0 1 1-.277-1.22c3.808-.871 7.077-.497 9.713 1.118a.625.625 0 0 1 .207.857zm1.225-2.723a.782.782 0 0 1-1.076.257c-2.688-1.652-6.785-2.131-9.965-1.166a.782.782 0 1 1-.454-1.498c3.633-1.103 8.147-.568 11.238 1.331a.782.782 0 0 1 .257 1.076zm.105-2.836C14.692 8.94 9.4 8.766 6.342 9.694a.937.937 0 1 1-.543-1.792c3.512-1.066 9.356-.862 13.09 1.356a.937.937 0 0 1-1.002 1.607z"/></svg>` },
+      { id: 13, name: "HBO Ultimate", duration: "1 Bulan", price: "55K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-violet-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` },
+      { id: 14, name: "HBO Standard", duration: "1 Bulan", price: "25K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-indigo-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` }
     ];
+    /* PRODUCTS_END */
 
     let currentCategory = 'all';
+    let isAdmin = false;
+    let tapCount = 0;
+    let tapTimer = null;
+
+    function handleLogoTap() {
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => { tapCount = 0; }, 1500);
+      if (tapCount >= 5) {
+        tapCount = 0;
+        toggleAdminMode(true);
+      }
+    }
+
+    function toggleAdminMode(enable) {
+      if (enable) {
+        let token = localStorage.getItem('arbi_gh_token');
+        if (!token) {
+          token = prompt('Masukkan GitHub Personal Access Token (ghp_...) untuk mengaktifkan Mode Admin Instan:');
+          if (!token) return;
+          localStorage.setItem('arbi_gh_token', token.trim());
+        }
+      }
+      isAdmin = enable;
+      document.getElementById('adminBar').classList.toggle('hidden', !enable);
+      filterItems();
+    }
+
+    function resetGithubToken() {
+      const token = prompt('Masukkan GitHub Personal Access Token (ghp_...) baru:', localStorage.getItem('arbi_gh_token') || '');
+      if (token) {
+        localStorage.setItem('arbi_gh_token', token.trim());
+        showToast('Token berhasil disimpan!');
+      }
+    }
+
+    function updateProductField(id, field, value) {
+      const item = products.find(p => p.id === id);
+      if (!item) return;
+      if (field === 'price') {
+        item.price = value;
+      } else if (field === 'highlight') {
+        item.highlight = !item.highlight;
+      } else if (field === 'garansi') {
+        item.garansi = !item.garansi;
+        item.garansiText = item.garansi ? 'Garansi' : 'Tanpa Garansi';
+      } else if (field === 'available') {
+        item.available = item.available === false ? true : false;
+      }
+      filterItems();
+    }
+
+    async function saveToGitHub() {
+      const token = localStorage.getItem('arbi_gh_token');
+      if (!token) return toggleAdminMode(true);
+
+      const btnText = document.getElementById('btnSaveText');
+      const origText = btnText.innerText;
+      btnText.innerText = "Menyimpan ke GitHub...";
+
+      try {
+        const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
+        const getResp = await fetch(apiUrl, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        if (!getResp.ok) throw new Error('Token GitHub tidak valid atau tidak punya izin repo.');
+
+        const fileData = await getResp.json();
+        const sha = fileData.sha;
+        const rawContent = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ''))));
+
+        const serializedProducts = "/* PRODUCTS_START */\n    let products = " + JSON.stringify(products, null, 2) + ";\n    /* PRODUCTS_END */";
+        const updatedHtml = rawContent.replace(/\/\* PRODUCTS_START \*\/[\s\S]*?\/\* PRODUCTS_END \*\//, serializedProducts);
+
+        const encodedContent = btoa(unescape(encodeURIComponent(updatedHtml)));
+        const putResp = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'Quick update via Web Admin Panel',
+            content: encodedContent,
+            sha: sha,
+            branch: 'main'
+          })
+        });
+
+        if (!putResp.ok) throw new Error('Gagal menyimpan ke GitHub.');
+        showToast('Tersimpan! Web otomatis update dalam ~10 detik.');
+      } catch (err) {
+        alert('Gagal: ' + err.message);
+      } finally {
+        btnText.innerText = origText;
+      }
+    }
 
     function renderList(items) {
       const listEl = document.getElementById('productList');
       listEl.innerHTML = '';
       items.forEach(item => {
+        const isAvailable = item.available !== false;
         const row = document.createElement('div');
-        row.className = 'flex items-center justify-between p-2.5 sm:p-3 rounded-xl border border-slate-200/90 bg-white transition hover:border-slate-300 shadow-sm';
+        row.className = `flex flex-col gap-2 p-2.5 sm:p-3 rounded-xl border border-slate-200/90 bg-white transition hover:border-slate-300 shadow-sm ${!isAvailable ? 'opacity-60 bg-slate-50' : ''}`;
         const badgeClass = item.garansi ? 'badge-garansi' : 'badge-nogar';
         const msg = encodeURIComponent(`Halo Arbi Shop, saya mau order ${item.name} (${item.duration}) seharga ${item.price}. Apakah stok masih ready?`);
 
-        row.innerHTML = `
-          <div class="flex items-center gap-2.5 min-w-0 pr-2">
-            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 ${item.iconBg}">
-              ${item.iconSvg}
-            </div>
-            <div class="min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate">${item.name}</h3>
-                ${item.highlight ? '<span class="px-1 py-0.2 rounded text-[9px] font-bold bg-blue-600 text-white leading-none">HOT</span>' : ''}
+        let adminControls = '';
+        if (isAdmin) {
+          adminControls = `
+            <div class="flex items-center justify-between gap-1.5 pt-2 border-t border-dashed border-slate-200 text-[10px]">
+              <div class="flex items-center gap-1">
+                <span class="text-slate-400 font-semibold">Harga:</span>
+                <input type="text" value="${item.price}" onchange="updateProductField(${item.id}, 'price', this.value)" class="w-16 px-2 py-0.5 rounded border border-slate-300 font-mono font-bold text-slate-900 focus:outline-none focus:border-blue-500">
               </div>
-              <p class="text-[10px] sm:text-xs text-slate-400 font-medium">${item.duration}</p>
+              <div class="flex items-center gap-1">
+                <button onclick="updateProductField(${item.id}, 'highlight')" class="px-2 py-0.5 rounded font-bold border ${item.highlight ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-100 text-slate-500 border-slate-200'}">HOT</button>
+                <button onclick="updateProductField(${item.id}, 'garansi')" class="px-2 py-0.5 rounded font-bold border ${item.garansi ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-100 text-slate-500 border-slate-200'}">Garansi</button>
+                <button onclick="updateProductField(${item.id}, 'available')" class="px-2 py-0.5 rounded font-bold border ${isAvailable ? 'bg-slate-100 text-slate-700 border-slate-200' : 'bg-rose-600 text-white border-rose-600'}">${isAvailable ? 'Ready' : 'Habis'}</button>
+              </div>
+            </div>
+          `;
+        }
+
+        row.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5 min-w-0 pr-2">
+              <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 ${item.iconBg}">
+                ${item.iconSvg}
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate">${item.name}</h3>
+                  ${item.highlight ? '<span class="px-1 py-0.2 rounded text-[9px] font-bold bg-blue-600 text-white leading-none">HOT</span>' : ''}
+                  ${!isAvailable ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-rose-100 text-rose-600 leading-none">HABIS</span>' : ''}
+                </div>
+                <p class="text-[10px] sm:text-xs text-slate-400 font-medium">${item.duration}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <span class="font-mono text-xs sm:text-sm font-bold text-slate-900">${item.price}</span>
+              <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full ${badgeClass} whitespace-nowrap">${item.garansiText}</span>
+              ${isAvailable ? `
+                <a href="https://wa.me/${waNumber}?text=${msg}" target="_blank" class="p-1 rounded-lg text-emerald-600 hover:bg-emerald-50 transition" title="Order via WA">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                </a>
+              ` : `
+                <span class="p-1 text-slate-300 cursor-not-allowed"><i data-lucide="slash" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i></span>
+              `}
             </div>
           </div>
-          <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <span class="font-mono text-xs sm:text-sm font-bold text-slate-900">${item.price}</span>
-            <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full ${badgeClass} whitespace-nowrap">${item.garansiText}</span>
-            <a href="https://wa.me/${waNumber}?text=${msg}" target="_blank" class="p-1 rounded-lg text-emerald-600 hover:bg-emerald-50 transition" title="Order via WA">
-              <i data-lucide="message-circle" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-            </a>
-          </div>
+          ${adminControls}
         `;
         listEl.appendChild(row);
       });
       lucide.createIcons();
     }
 
-    function setCategory(cat) {
+    function setCategory(cat, e) {
       currentCategory = cat;
       document.querySelectorAll('.cat-btn').forEach(btn => {
         btn.classList.remove('bg-blue-600', 'text-white');
         btn.classList.add('bg-slate-100', 'text-slate-600');
       });
-      event.target.classList.remove('bg-slate-100', 'text-slate-600');
-      event.target.classList.add('bg-blue-600', 'text-white');
+      if (e && e.target) {
+        e.target.classList.remove('bg-slate-100', 'text-slate-600');
+        e.target.classList.add('bg-blue-600', 'text-white');
+      }
       filterItems();
     }
 
@@ -349,7 +483,6 @@
       const originalText = btnText.innerText;
       btnText.innerText = "Memproses...";
 
-      // Sembunyikan elemen navigasi agar file poster hasil download bersih
       const toolbar = document.getElementById('toolbarSection');
       const topButtons = document.getElementById('topActionButtons');
       if (toolbar) toolbar.style.display = 'none';
@@ -370,7 +503,7 @@
         link.href = canvas.toDataURL('image/png');
         link.click();
         showToast("Pricelist berhasil didownload!");
-      }).catch(err => {
+      }).catch(() => {
         if (toolbar) toolbar.style.display = 'block';
         if (topButtons) topButtons.style.display = 'grid';
         btnText.innerText = originalText;
