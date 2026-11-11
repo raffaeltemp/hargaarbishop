@@ -12,6 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- html2canvas for instant poster download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -53,8 +55,35 @@
         <p class="text-[11px] sm:text-xs text-slate-500 mt-1.5 font-medium">Akun Premium Berkualitas • Proses Kilat • Terpercaya</p>
       </div>
 
+      <!-- Quick Action Buttons (Baru di Atas Cari Layanan) -->
+      <div id="topActionButtons" class="grid grid-cols-3 gap-2 mt-4 mb-3">
+        <!-- 1. Payment Method -->
+        <button onclick="openPaymentModal()" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 hover:border-blue-200 text-slate-700 hover:text-blue-600 transition active:scale-95 group">
+          <div class="w-6 h-6 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition">
+            <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+          </div>
+          <span class="text-[10px] sm:text-[11px] font-bold text-center leading-tight">Payment Method</span>
+        </button>
+
+        <!-- 2. Hubungi Admin -->
+        <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20apakah%20stok%20akun%20masih%20tersedia?" target="_blank" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-200 text-slate-700 hover:text-emerald-600 transition active:scale-95 group">
+          <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
+            <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+          </div>
+          <span class="text-[10px] sm:text-[11px] font-bold text-center leading-tight">Hubungi Admin</span>
+        </a>
+
+        <!-- 3. Download Pricelist -->
+        <button onclick="downloadPoster()" id="btnDownload" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50 border border-slate-200/80 hover:border-indigo-200 text-slate-700 hover:text-indigo-600 transition active:scale-95 group">
+          <div class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          </div>
+          <span id="btnDownloadText" class="text-[10px] sm:text-[11px] font-bold text-center leading-tight">Download Pricelist</span>
+        </button>
+      </div>
+
       <!-- Quick Search & Category Filters -->
-      <div class="my-4 space-y-2.5">
+      <div class="mb-4 space-y-2.5" id="toolbarSection">
         <div class="relative">
           <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
           <input type="text" id="searchInput" oninput="filterItems()" placeholder="Cari layanan (Netflix, YouTube, Canva...)" class="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-slate-50/50">
@@ -145,7 +174,6 @@
 
       <!-- Modal Body -->
       <div class="p-3.5 space-y-3 max-h-[75vh] overflow-y-auto">
-        
         <!-- Peringatan Stok Penting -->
         <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start gap-2">
           <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
@@ -217,9 +245,6 @@
   <script>
     const waNumber = "6285703275372";
 
-    // ==========================================
-    // AREA EDIT HARGA CEPAT (UBAH HARGA DI SINI)
-    // ==========================================
     const products = [
       { id: 1, name: "YouTube Premium", duration: "1 Bulan", price: "18K", type: "music", garansi: false, garansiText: "Tanpa Garansi", highlight: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>` },
       { id: 2, name: "Netflix", duration: "1 Bulan", price: "38K", type: "movie", garansi: true, garansiText: "Garansi", highlight: true, iconBg: "bg-slate-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-red-600" viewBox="0 0 24 24"><path d="M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z"/></svg>` },
@@ -317,6 +342,48 @@
     window.onclick = function(e) {
       const m = document.getElementById('paymentModal');
       if (e.target === m) closePaymentModal();
+    }
+
+    function downloadPoster() {
+      const btnText = document.getElementById('btnDownloadText');
+      const originalText = btnText.innerText;
+      btnText.innerText = "Memproses...";
+
+      // Sembunyikan elemen navigasi agar file poster hasil download bersih
+      const toolbar = document.getElementById('toolbarSection');
+      const topButtons = document.getElementById('topActionButtons');
+      if (toolbar) toolbar.style.display = 'none';
+      if (topButtons) topButtons.style.display = 'none';
+
+      html2canvas(document.getElementById('priceCard'), {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        if (toolbar) toolbar.style.display = 'block';
+        if (topButtons) topButtons.style.display = 'grid';
+        btnText.innerText = originalText;
+        lucide.createIcons();
+
+        const link = document.createElement('a');
+        link.download = 'ARBI-SHOP-PRICELIST.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast("Pricelist berhasil didownload!");
+      }).catch(err => {
+        if (toolbar) toolbar.style.display = 'block';
+        if (topButtons) topButtons.style.display = 'grid';
+        btnText.innerText = originalText;
+        lucide.createIcons();
+        alert("Gagal membuat gambar, silakan gunakan screenshot manual.");
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      t.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+      setTimeout(() => t.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2'), 2500);
     }
 
     renderList(products);
