@@ -3,6 +3,7 @@ name: AI Website Updater
 on:
   issues:
     types: [opened]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -10,12 +11,13 @@ permissions:
 
 jobs:
   update-website:
-    # Hanya dijalankan jika issue dibuat oleh pemilik repo
     if: github.actor == github.repository_owner
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -28,8 +30,8 @@ jobs:
       - name: Run AI Code Updater
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          ISSUE_TITLE: ${{ github.event.issue.title }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_TITLE: ${{ github.event.issue.title || 'Manual trigger update' }}
+          ISSUE_BODY: ${{ github.event.issue.body || '' }}
         run: |
           python - << 'EOF'
           import os
@@ -49,8 +51,8 @@ jobs:
           with open("index.html", "r", encoding="utf-8") as f:
               current_html = f.read()
 
-          # Daftar model prioritas & fallback jika salah satu sedang 503 overload
-          models = ["gemini-3.8-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
+          # Urutan model stabil untuk fallback otomatis jika ada yang overload (503) atau 404
+          model_candidates = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-3.8-flash"]
           headers = {"Content-Type": "application/json"}
 
           system_instruction = (
@@ -73,73 +75,33 @@ jobs:
 
           res_data = None
 
-          # Loop model dan mekanisme auto-retry
-          for model_name in models:
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
-              print(f"Mencoba request menggunakan model: {model_name}...")
+          for model in model_candidates:
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+              print(f"--> Menghubungi model: {model}...")
               
-              success = False
+              model_success = False
               for attempt in range(1, 4):
-                  resp = requests.post(url, headers=headers, json=payload)
-                  if resp.status_code == 200:
-                      res_data = resp.json()
-                      success = True
-                      break
-                  elif resp.status_code in [500, 503, 504]:
-                      print(f"Percobaan {attempt}: Server sibuk (HTTP {resp.status_code}). Menunggu 4 detik...")
-                      time.sleep(4)
-                  else:
-                      print(f"Model {model_name} gagal (HTTP {resp.status_code}): {resp.text}")
-                      break
-              
-              if success:
-                  print(f"Berhasil diproses oleh {model_name}!")
+                  try:
+                      resp = requests.post(url, headers=headers, json=payload, timeout=45)
+                      if resp.status_code == 200:
+                          res_data = resp.json()
+                          model_success = True
+                          print(f"Berhasil diproses oleh {model}!")
+                          break
+                      elif resp.status_code in [500, 502, 503, 504]:
+                          print(f"Server Google sibuk (HTTP {resp.status_code}). Menunggu 4 detik (Percobaan {attempt}/3)...")
+                          time.sleep(4)
+                      elif resp.status_code == 404:
+                          print(f"Model {model} tidak tersedia (404), beralih ke model berikutnya...")
+                          break
+                      else:
+                          print(f"Response HTTP {resp.status_code}: {resp.text}")
+                          break
+                  except Exception as e:
+                      print(f"Koneksi timeout/gagal: {e}. Menunggu 3 detik...")
+                      time.sleep(3)
+
+              if model_success:
                   break
 
-          if not res_data:
-              print("Gagal memproses kode: Semua model Gemini sedang tidak dapat diakses saat ini.")
-              exit(1)
-
-          new_code = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
-
-          # Bersihkan markdown formatting jika ada
-          if new_code.startswith("```html"):
-              new_code = new_code[7:]
-          elif new_code.startswith("```"):
-              new_code = new_code[3:]
-          if new_code.endswith("```"):
-              new_code = new_code[:-3]
-          new_code = new_code.strip()
-
-          if "<!DOCTYPE html>" in new_code and "</html>" in new_code.lower():
-              with open("index.html", "w", encoding="utf-8") as f:
-                  f.write(new_code)
-              print("index.html sukses diperbarui!")
-          else:
-              print("Output AI tidak valid atau terpotong.")
-              exit(1)
-          EOF
-
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git diff --staged --quiet || (git commit -m "Auto-update via Issue: ${{ github.event.issue.title }}" && git push)
-
-      - name: Reply and Close Issue
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: '✅ **Website Berhasil Diperbarui!**\n\nPerubahan sudah otomatis di-commit ke `index.html` dan sedang di-deploy oleh Netlify ke [https://hargaarbishop.netlify.app/](https://hargaarbishop.netlify.app/)'
-            });
-            await github.rest.issues.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              state: 'closed'
-            });
+          if not res_
