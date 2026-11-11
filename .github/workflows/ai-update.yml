@@ -3,7 +3,6 @@ name: AI Website Updater
 on:
   issues:
     types: [opened]
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,8 +15,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,78 +27,30 @@ jobs:
       - name: Run AI Code Updater
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          ISSUE_TITLE: ${{ github.event.issue.title || 'Manual trigger update' }}
-          ISSUE_BODY: ${{ github.event.issue.body || '' }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: python updater.py
+
+      - name: Commit and Push Changes
         run: |
-          python - << 'EOF'
-          import os
-          import json
-          import time
-          import requests
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --staged --quiet || (git commit -m "Auto-update via Issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}" && git push)
 
-          api_key = os.environ.get("GEMINI_API_KEY")
-          title = os.environ.get("ISSUE_TITLE", "")
-          body = os.environ.get("ISSUE_BODY", "")
-          prompt = f"{title}\n{body}".strip()
-
-          if not api_key:
-              print("Error: GEMINI_API_KEY belum diset di GitHub Secrets!")
-              exit(1)
-
-          with open("index.html", "r", encoding="utf-8") as f:
-              current_html = f.read()
-
-          # Urutan model stabil untuk fallback otomatis jika ada yang overload (503) atau 404
-          model_candidates = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-3.8-flash"]
-          headers = {"Content-Type": "application/json"}
-
-          system_instruction = (
-              "Kamu adalah web developer frontend profesional untuk ARBI SHOP. "
-              "Tugasmu memodifikasi kode index.html sesuai instruksi permintaan.\n"
-              "ATURAN WAJIB:\n"
-              "1. Kembalikan HANYA kode HTML utuh dari <!DOCTYPE html> sampai </html>.\n"
-              "2. DILARANG menambahkan markdown backticks seperti ```html atau ```.\n"
-              "3. DILARANG menambahkan teks pengantar/penutup apa pun.\n"
-              "4. Pertahankan semua fitur JS, styling Tailwind, QRIS, link WA, dan modal agar tetap berfungsi normal."
-          )
-
-          payload = {
-              "contents": [{
-                  "parts": [{"text": f"KODE SAAT INI:\n{current_html}\n\nPERINTAH REVISI:\n{prompt}"}]
-              }],
-              "systemInstruction": {"parts": [{"text": system_instruction}]},
-              "generationConfig": {"temperature": 0.2}
-          }
-
-          res_data = None
-
-          for model in model_candidates:
-              url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
-              print(f"--> Menghubungi model: {model}...")
-              
-              model_success = False
-              for attempt in range(1, 4):
-                  try:
-                      resp = requests.post(url, headers=headers, json=payload, timeout=45)
-                      if resp.status_code == 200:
-                          res_data = resp.json()
-                          model_success = True
-                          print(f"Berhasil diproses oleh {model}!")
-                          break
-                      elif resp.status_code in [500, 502, 503, 504]:
-                          print(f"Server Google sibuk (HTTP {resp.status_code}). Menunggu 4 detik (Percobaan {attempt}/3)...")
-                          time.sleep(4)
-                      elif resp.status_code == 404:
-                          print(f"Model {model} tidak tersedia (404), beralih ke model berikutnya...")
-                          break
-                      else:
-                          print(f"Response HTTP {resp.status_code}: {resp.text}")
-                          break
-                  except Exception as e:
-                      print(f"Koneksi timeout/gagal: {e}. Menunggu 3 detik...")
-                      time.sleep(3)
-
-              if model_success:
-                  break
-
-          if not res_
+      - name: Reply and Close Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '✅ **Website Berhasil Diperbarui!**\n\nPerubahan sudah otomatis di-commit ke `index.html` dan sedang di-deploy oleh Netlify ke [https://hargaarbishop.netlify.app/](https://hargaarbishop.netlify.app/)'
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
