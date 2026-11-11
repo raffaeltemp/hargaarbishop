@@ -34,6 +34,7 @@ jobs:
           python - << 'EOF'
           import os
           import json
+          import time
           import requests
 
           api_key = os.environ.get("GEMINI_API_KEY")
@@ -48,7 +49,8 @@ jobs:
           with open("index.html", "r", encoding="utf-8") as f:
               current_html = f.read()
 
-          url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={api_key}"
+          # Daftar model prioritas & fallback jika salah satu sedang 503 overload
+          models = ["gemini-3.8-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
           headers = {"Content-Type": "application/json"}
 
           system_instruction = (
@@ -69,15 +71,38 @@ jobs:
               "generationConfig": {"temperature": 0.2}
           }
 
-          resp = requests.post(url, headers=headers, json=payload)
-          if resp.status_code != 200:
-              print(f"Error Gemini API: {resp.text}")
+          res_data = None
+
+          # Loop model dan mekanisme auto-retry
+          for model_name in models:
+              url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+              print(f"Mencoba request menggunakan model: {model_name}...")
+              
+              success = False
+              for attempt in range(1, 4):
+                  resp = requests.post(url, headers=headers, json=payload)
+                  if resp.status_code == 200:
+                      res_data = resp.json()
+                      success = True
+                      break
+                  elif resp.status_code in [500, 503, 504]:
+                      print(f"Percobaan {attempt}: Server sibuk (HTTP {resp.status_code}). Menunggu 4 detik...")
+                      time.sleep(4)
+                  else:
+                      print(f"Model {model_name} gagal (HTTP {resp.status_code}): {resp.text}")
+                      break
+              
+              if success:
+                  print(f"Berhasil diproses oleh {model_name}!")
+                  break
+
+          if not res_data:
+              print("Gagal memproses kode: Semua model Gemini sedang tidak dapat diakses saat ini.")
               exit(1)
 
-          res_data = resp.json()
           new_code = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
 
-          # Bersihkan markdown jika ada
+          # Bersihkan markdown formatting jika ada
           if new_code.startswith("```html"):
               new_code = new_code[7:]
           elif new_code.startswith("```"):
@@ -91,7 +116,7 @@ jobs:
                   f.write(new_code)
               print("index.html sukses diperbarui!")
           else:
-              print("Output AI tidak valid.")
+              print("Output AI tidak valid atau terpotong.")
               exit(1)
           EOF
 
