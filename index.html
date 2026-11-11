@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -36,17 +35,53 @@
 
   <div class="max-w-xl mx-auto">
 
-    <!-- BAR ADMIN (Hanya muncul saat Mode Admin aktif) -->
-    <div id="adminBar" class="hidden mb-3 p-3 rounded-2xl bg-slate-900 text-white shadow-xl border border-slate-700">
-      <div class="flex items-center justify-between mb-2">
+    <!-- BAR ADMIN (Muncul saat logo diketuk 5x) -->
+    <div id="adminBar" class="hidden mb-3 p-3.5 rounded-2xl bg-slate-900 text-white shadow-xl border border-slate-700 space-y-3">
+      <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
           <span class="text-xs font-bold tracking-wide uppercase">Mode Admin Aktif</span>
         </div>
         <button onclick="toggleAdminMode(false)" class="text-[11px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800">Tutup</button>
       </div>
-      <p class="text-[11px] text-slate-300 mb-2.5">Ubah harga atau klik tombol <b>HOT / Garansi / Stok</b> langsung di daftar produk bawah, lalu klik Simpan.</p>
+      <p class="text-[11px] text-slate-300 leading-relaxed">Ubah harga, tambah/hapus produk, atau klik tombol <b>Promo! / Garansi / Stok</b> di bawah, lalu klik Simpan.</p>
+
+      <!-- Form Tambah Produk Baru -->
+      <div id="addProductForm" class="hidden p-3 rounded-xl bg-slate-800/90 border border-slate-700 space-y-2.5 text-xs">
+        <div class="font-bold text-slate-200 flex items-center justify-between">
+          <span>Tambah Produk Baru</span>
+          <button onclick="toggleAddForm()" class="text-slate-400 hover:text-white text-[11px]">Batal</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" id="newName" placeholder="Nama Aplikasi (cth: Disney+)" class="col-span-2 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500">
+          <input type="text" id="newDuration" placeholder="Durasi (cth: 1 Bulan)" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500">
+          <input type="text" id="newPrice" placeholder="Harga (cth: 25K)" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono focus:outline-none focus:border-blue-500">
+          <select id="newType" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500">
+            <option value="movie">Kategori: Film</option>
+            <option value="music">Kategori: Musik</option>
+            <option value="creative">Kategori: Editing</option>
+          </select>
+          <select id="newGaransi" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500">
+            <option value="true">Garansi</option>
+            <option value="false">Tanpa Garansi</option>
+          </select>
+        </div>
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center gap-1.5 text-[11px] text-slate-300 cursor-pointer">
+            <input type="checkbox" id="newHighlight" class="rounded text-blue-600">
+            <span>Pasang Badge <b>Promo!</b></span>
+          </label>
+          <button onclick="addNewProduct()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition">
+            + Masukkan ke Daftar
+          </button>
+        </div>
+      </div>
+
       <div class="flex gap-2">
+        <button onclick="toggleAddForm()" id="btnToggleAdd" class="py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition flex items-center justify-center gap-1">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>Produk</span>
+        </button>
         <button onclick="saveToGitHub()" id="btnSaveGithub" class="flex-1 py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow transition flex items-center justify-center gap-1.5">
           <i data-lucide="save" class="w-3.5 h-3.5"></i>
           <span id="btnSaveText">Simpan & Update Web (1 Detik)</span>
@@ -81,7 +116,7 @@
           <span class="text-[10px] sm:text-[11px] font-bold text-center leading-tight">Payment Method</span>
         </button>
 
-        <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20apakah%20stok%20akun%20masih%20tersedia?" target="_blank" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-200 text-slate-700 hover:text-emerald-600 transition active:scale-95 group">
+        <a href="https://wa.me/6285703275372?text=Halo%20admin%20arbishop,%20saya%20mau%20order%20aplikasi%20premium" target="_blank" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-200 text-slate-700 hover:text-emerald-600 transition active:scale-95 group">
           <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
             <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
           </div>
@@ -152,7 +187,7 @@
       </div>
     </button>
 
-    <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20apakah%20stok%20akun%20masih%20tersedia?" target="_blank" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-full shadow-lg shadow-emerald-600/25 transition transform active:scale-95">
+    <a href="https://wa.me/6285703275372?text=Halo%20admin%20arbishop,%20saya%20mau%20order%20aplikasi%20premium" target="_blank" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-full shadow-lg shadow-emerald-600/25 transition transform active:scale-95">
       <span class="relative flex items-center justify-center">
         <i data-lucide="message-circle" class="w-4 h-4"></i>
         <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-amber-400 rounded-full animate-ping"></span>
@@ -228,7 +263,7 @@
       </div>
 
       <div class="p-3 border-t border-slate-100 bg-slate-50/60 space-y-1.5">
-        <a href="https://wa.me/6285703275372?text=Halo%20Arbi%20Shop,%20saya%20sudah%20transfer" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition">
+        <a href="https://wa.me/6285703275372?text=Halo%20admin%20arbishop,%20saya%20sudah%20transfer%20untuk%20order%20aplikasi%20premium" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition">
           <i data-lucide="send" class="w-3.5 h-3.5"></i>
           <span>Konfirmasi Pembayaran ke WA</span>
         </a>
@@ -250,189 +285,21 @@
 
     /* PRODUCTS_START */
     let products = [
-  {
-    "id": 1,
-    "name": "YouTube Premium",
-    "duration": "1 Bulan",
-    "price": "18K",
-    "type": "music",
-    "garansi": false,
-    "garansiText": "Tanpa Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-red-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z\"/></svg>"
-  },
-  {
-    "id": 2,
-    "name": "Netflix",
-    "duration": "1 Bulan",
-    "price": "38K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-slate-900",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-red-600\" viewBox=\"0 0 24 24\"><path d=\"M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z\"/></svg>"
-  },
-  {
-    "id": 3,
-    "name": "CapCut Pro",
-    "duration": "7 Hari",
-    "price": "11K",
-    "type": "creative",
-    "garansi": false,
-    "garansiText": "Tanpa Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-slate-800",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z\"/></svg>"
-  },
-  {
-    "id": 4,
-    "name": "CapCut Pro",
-    "duration": "1 Bulan",
-    "price": "37K",
-    "type": "creative",
-    "garansi": false,
-    "garansiText": "Tanpa Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-slate-800",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z\"/></svg>"
-  },
-  {
-    "id": 5,
-    "name": "Viu Premium",
-    "duration": "1 Tahun",
-    "price": "5K",
-    "type": "movie",
-    "garansi": false,
-    "garansiText": "Tanpa Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-amber-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><text x=\"5\" y=\"17\" font-size=\"14\" font-weight=\"bold\" fill=\"white\">V</text></svg>"
-  },
-  {
-    "id": 6,
-    "name": "Canva Pro",
-    "duration": "1 Bulan",
-    "price": "5K",
-    "type": "creative",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-cyan-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"#00c4cc\"/><text x=\"7\" y=\"16\" font-size=\"14\" font-weight=\"bold\" fill=\"white\" font-style=\"italic\">C</text></svg>"
-  },
-  {
-    "id": 7,
-    "name": "Prime Video",
-    "duration": "1 Bulan",
-    "price": "14K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-sky-600",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M3 17.5c4.5 2 9.5 2 14 0M18 16l3 2-1-3.5\"/></svg>"
-  },
-  {
-    "id": 8,
-    "name": "Vidio Platinum (Mobile)",
-    "duration": "1 Bulan",
-    "price": "35K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-rose-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M10 8l6 4-6 4V8z\"/></svg>"
-  },
-  {
-    "id": 9,
-    "name": "Vidio Platinum (All Device)",
-    "duration": "1 Bulan",
-    "price": "45K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-rose-600",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M4 6h16v10H4z M10 8l5 3-5 3z\"/></svg>"
-  },
-  {
-    "id": 10,
-    "name": "WeTV",
-    "duration": "1 Bulan",
-    "price": "30K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-orange-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M12 2L2 22h20L12 2z\"/></svg>"
-  },
-  {
-    "id": 11,
-    "name": "Apple Music (Android)",
-    "duration": "1 Bulan",
-    "price": "10K",
-    "type": "music",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-red-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z\"/></svg>"
-  },
-  {
-    "id": 12,
-    "name": "Spotify Premium",
-    "duration": "1 Bulan",
-    "price": "25K",
-    "type": "music",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-emerald-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10A10 10 0 0 0 12 2zm4.586 14.424a.623.623 0 0 1-.857.207c-2.348-1.434-5.304-1.758-8.786-.962a.625.625 0 1 1-.277-1.22c3.808-.871 7.077-.497 9.713 1.118a.625.625 0 0 1 .207.857zm1.225-2.723a.782.782 0 0 1-1.076.257c-2.688-1.652-6.785-2.131-9.965-1.166a.782.782 0 1 1-.454-1.498c3.633-1.103 8.147-.568 11.238 1.331a.782.782 0 0 1 .257 1.076zm.105-2.836C14.692 8.94 9.4 8.766 6.342 9.694a.937.937 0 1 1-.543-1.792c3.512-1.066 9.356-.862 13.09 1.356a.937.937 0 0 1-1.002 1.607z\"/></svg>"
-  },
-  {
-    "id": 13,
-    "name": "HBO Ultimate",
-    "duration": "1 Bulan",
-    "price": "55K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-violet-900",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><text x=\"2\" y=\"16\" font-size=\"11\" font-weight=\"900\" fill=\"white\">HBO</text></svg>"
-  },
-  {
-    "id": 14,
-    "name": "HBO Standard",
-    "duration": "1 Bulan",
-    "price": "25K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-indigo-900",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><text x=\"2\" y=\"16\" font-size=\"11\" font-weight=\"900\" fill=\"white\">HBO</text></svg>"
-  }
-];
+      { id: 1, name: "YouTube Premium", duration: "1 Bulan", price: "18K", type: "music", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>` },
+      { id: 2, name: "Netflix", duration: "1 Bulan", price: "38K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-slate-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-red-600" viewBox="0 0 24 24"><path d="M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z"/></svg>` },
+      { id: 3, name: "CapCut Pro", duration: "7 Hari", price: "11K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
+      { id: 4, name: "CapCut Pro", duration: "1 Bulan", price: "37K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
+      { id: 5, name: "Viu Premium", duration: "1 Tahun", price: "5K", type: "movie", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-amber-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="5" y="17" font-size="14" font-weight="bold" fill="white">V</text></svg>` },
+      { id: 6, name: "Canva Pro", duration: "1 Bulan", price: "5K", type: "creative", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-cyan-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#00c4cc"/><text x="7" y="16" font-size="14" font-weight="bold" fill="white" font-style="italic">C</text></svg>` },
+      { id: 7, name: "Prime Video", duration: "1 Bulan", price: "14K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-sky-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M3 17.5c4.5 2 9.5 2 14 0M18 16l3 2-1-3.5"/></svg>` },
+      { id: 8, name: "Vidio Platinum (Mobile)", duration: "1 Bulan", price: "35K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-rose-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M10 8l6 4-6 4V8z"/></svg>` },
+      { id: 9, name: "Vidio Platinum (All Device)", duration: "1 Bulan", price: "45K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-rose-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M4 6h16v10H4z M10 8l5 3-5 3z"/></svg>` },
+      { id: 10, name: "WeTV", duration: "1 Bulan", price: "30K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-orange-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>` },
+      { id: 11, name: "Apple Music (Android)", duration: "1 Bulan", price: "10K", type: "music", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>` },
+      { id: 12, name: "Spotify Premium", duration: "1 Bulan", price: "25K", type: "music", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-emerald-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10A10 10 0 0 0 12 2zm4.586 14.424a.623.623 0 0 1-.857.207c-2.348-1.434-5.304-1.758-8.786-.962a.625.625 0 1 1-.277-1.22c3.808-.871 7.077-.497 9.713 1.118a.625.625 0 0 1 .207.857zm1.225-2.723a.782.782 0 0 1-1.076.257c-2.688-1.652-6.785-2.131-9.965-1.166a.782.782 0 1 1-.454-1.498c3.633-1.103 8.147-.568 11.238 1.331a.782.782 0 0 1 .257 1.076zm.105-2.836C14.692 8.94 9.4 8.766 6.342 9.694a.937.937 0 1 1-.543-1.792c3.512-1.066 9.356-.862 13.09 1.356a.937.937 0 0 1-1.002 1.607z"/></svg>` },
+      { id: 13, name: "HBO Ultimate", duration: "1 Bulan", price: "55K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-violet-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` },
+      { id: 14, name: "HBO Standard", duration: "1 Bulan", price: "25K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-indigo-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` }
+    ];
     /* PRODUCTS_END */
 
     let currentCategory = 'all';
@@ -462,6 +329,80 @@
       isAdmin = enable;
       document.getElementById('adminBar').classList.toggle('hidden', !enable);
       filterItems();
+    }
+
+    function toggleAddForm() {
+      const form = document.getElementById('addProductForm');
+      form.classList.toggle('hidden');
+    }
+
+    function getAutoBrandStyle(name, type) {
+      const n = name.toLowerCase();
+      const initial = name.trim().charAt(0).toUpperCase() || 'A';
+      let bg = 'bg-blue-600';
+      if (n.includes('youtube')) bg = 'bg-red-500';
+      else if (n.includes('netflix')) bg = 'bg-slate-900';
+      else if (n.includes('spotify')) bg = 'bg-emerald-500';
+      else if (n.includes('canva')) bg = 'bg-cyan-500';
+      else if (n.includes('capcut')) bg = 'bg-slate-800';
+      else if (n.includes('viu')) bg = 'bg-amber-500';
+      else if (n.includes('vidio')) bg = 'bg-rose-600';
+      else if (n.includes('prime') || n.includes('disney')) bg = 'bg-sky-600';
+      else if (n.includes('hbo')) bg = 'bg-violet-900';
+      else if (type === 'music') bg = 'bg-emerald-600';
+      else if (type === 'creative') bg = 'bg-indigo-600';
+
+      const svg = `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="50%" y="17" text-anchor="middle" font-size="14" font-weight="bold" fill="white">${initial}</text></svg>`;
+      return { iconBg: bg, iconSvg: svg };
+    }
+
+    function addNewProduct() {
+      const name = document.getElementById('newName').value.trim();
+      const duration = document.getElementById('newDuration').value.trim();
+      const price = document.getElementById('newPrice').value.trim();
+      const type = document.getElementById('newType').value;
+      const garansi = document.getElementById('newGaransi').value === 'true';
+      const highlight = document.getElementById('newHighlight').checked;
+
+      if (!name || !duration || !price) {
+        alert('Mohon isi Nama Aplikasi, Durasi, dan Harga!');
+        return;
+      }
+
+      const maxId = products.reduce((max, p) => Math.max(max, p.id || 0), 0);
+      const style = getAutoBrandStyle(name, type);
+
+      products.push({
+        id: maxId + 1,
+        name: name,
+        duration: duration,
+        price: price.toUpperCase(),
+        type: type,
+        garansi: garansi,
+        garansiText: garansi ? 'Garansi' : 'Tanpa Garansi',
+        highlight: highlight,
+        available: true,
+        iconBg: style.iconBg,
+        iconSvg: style.iconSvg
+      });
+
+      document.getElementById('newName').value = '';
+      document.getElementById('newDuration').value = '';
+      document.getElementById('newPrice').value = '';
+      document.getElementById('newHighlight').checked = false;
+      document.getElementById('addProductForm').classList.add('hidden');
+
+      filterItems();
+      showToast('Produk ditambahkan! Jangan lupa klik Simpan & Update Web.');
+    }
+
+    function deleteProduct(id) {
+      const target = products.find(p => p.id === id);
+      if (!target) return;
+      if (!confirm(`Hapus "${target.name} (${target.duration})" dari daftar?`)) return;
+      products = products.filter(p => p.id !== id);
+      filterItems();
+      showToast('Produk dihapus! Klik Simpan untuk memperbarui web.');
     }
 
     function resetGithubToken() {
@@ -530,7 +471,7 @@
         });
 
         if (!putResp.ok) throw new Error('Gagal menyimpan ke GitHub.');
-        showToast('Tersimpan! Web otomatis update dalam ~10 detik.');
+        showToast('Tersimpan! Vercel otomatis update dalam ~5-10 detik.');
       } catch (err) {
         alert('Gagal: ' + err.message);
       } finally {
@@ -546,20 +487,21 @@
         const row = document.createElement('div');
         row.className = `flex flex-col gap-2 p-2.5 sm:p-3 rounded-xl border border-slate-200/90 bg-white transition hover:border-slate-300 shadow-sm ${!isAvailable ? 'opacity-60 bg-slate-50' : ''}`;
         const badgeClass = item.garansi ? 'badge-garansi' : 'badge-nogar';
-        const msg = encodeURIComponent(`Halo Arbi Shop, saya mau order ${item.name} (${item.duration}) seharga ${item.price}. Apakah stok masih ready?`);
+        const msg = encodeURIComponent(`Halo admin arbishop, saya mau order aplikasi premium ${item.name} (${item.duration}) - ${item.price}`);
 
         let adminControls = '';
         if (isAdmin) {
           adminControls = `
-            <div class="flex items-center justify-between gap-1.5 pt-2 border-t border-dashed border-slate-200 text-[10px]">
+            <div class="flex items-center justify-between gap-1.5 pt-2 border-t border-dashed border-slate-200 text-[10px] flex-wrap">
               <div class="flex items-center gap-1">
                 <span class="text-slate-400 font-semibold">Harga:</span>
                 <input type="text" value="${item.price}" onchange="updateProductField(${item.id}, 'price', this.value)" class="w-16 px-2 py-0.5 rounded border border-slate-300 font-mono font-bold text-slate-900 focus:outline-none focus:border-blue-500">
               </div>
-              <div class="flex items-center gap-1">
-                <button onclick="updateProductField(${item.id}, 'highlight')" class="px-2 py-0.5 rounded font-bold border ${item.highlight ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-100 text-slate-500 border-slate-200'}">HOT</button>
+              <div class="flex items-center gap-1 flex-wrap">
+                <button onclick="updateProductField(${item.id}, 'highlight')" class="px-2 py-0.5 rounded font-bold border ${item.highlight ? 'bg-amber-500 text-white border-amber-500' : 'bg-slate-100 text-slate-500 border-slate-200'}">Promo!</button>
                 <button onclick="updateProductField(${item.id}, 'garansi')" class="px-2 py-0.5 rounded font-bold border ${item.garansi ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-100 text-slate-500 border-slate-200'}">Garansi</button>
                 <button onclick="updateProductField(${item.id}, 'available')" class="px-2 py-0.5 rounded font-bold border ${isAvailable ? 'bg-slate-100 text-slate-700 border-slate-200' : 'bg-rose-600 text-white border-rose-600'}">${isAvailable ? 'Ready' : 'Habis'}</button>
+                <button onclick="deleteProduct(${item.id})" class="px-2 py-0.5 rounded font-bold border bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-600 hover:text-white transition" title="Hapus Produk">Hapus</button>
               </div>
             </div>
           `;
@@ -574,8 +516,8 @@
               <div class="min-w-0">
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate">${item.name}</h3>
-                  ${item.highlight ? '<span class="px-1 py-0.2 rounded text-[9px] font-bold bg-blue-600 text-white leading-none">HOT</span>' : ''}
-                  ${!isAvailable ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-rose-100 text-rose-600 leading-none">HABIS</span>' : ''}
+                  ${item.highlight ? '<span class="px-1.5 py-0.5 rounded-md text-[9px] font-extrabold bg-gradient-to-r from-amber-500 to-orange-500 text-white leading-none shadow-sm">Promo!</span>' : ''}
+                  ${!isAvailable ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 text-rose-600 leading-none">HABIS</span>' : ''}
                 </div>
                 <p class="text-[10px] sm:text-xs text-slate-400 font-medium">${item.duration}</p>
               </div>
@@ -646,38 +588,235 @@
       if (e.target === m) closePaymentModal();
     }
 
-    function downloadPoster() {
+    // GENERATOR POSTER HD (2 KOLOM RAPI & ANTI BERANTAKAN)
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function getBrandHex(bgClass) {
+      const map = {
+        'bg-red-500': '#ef4444',
+        'bg-slate-900': '#0f172a',
+        'bg-slate-800': '#1e293b',
+        'bg-amber-500': '#f59e0b',
+        'bg-cyan-500': '#06b6d4',
+        'bg-sky-600': '#0284c7',
+        'bg-rose-500': '#f43f5e',
+        'bg-rose-600': '#e11d48',
+        'bg-orange-500': '#f97316',
+        'bg-emerald-500': '#10b981',
+        'bg-emerald-600': '#059669',
+        'bg-violet-900': '#4c1d95',
+        'bg-indigo-900': '#312e81',
+        'bg-indigo-600': '#4f46e5',
+        'bg-blue-600': '#2563eb'
+      };
+      return map[bgClass] || '#2563eb';
+    }
+
+    async function downloadPoster() {
       const btnText = document.getElementById('btnDownloadText');
       const originalText = btnText.innerText;
-      btnText.innerText = "Memproses...";
+      btnText.innerText = "Membuat...";
 
-      const toolbar = document.getElementById('toolbarSection');
-      const topButtons = document.getElementById('topActionButtons');
-      if (toolbar) toolbar.style.display = 'none';
-      if (topButtons) topButtons.style.display = 'none';
+      try {
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready;
+        }
 
-      html2canvas(document.getElementById('priceCard'), {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-      }).then(canvas => {
-        if (toolbar) toolbar.style.display = 'block';
-        if (topButtons) topButtons.style.display = 'grid';
-        btnText.innerText = originalText;
-        lucide.createIcons();
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const W = 1080;
+        const cols = 2;
+        const rows = Math.ceil(products.length / cols);
+        const cardH = 98;
+        const gapX = 24;
+        const gapY = 18;
+        const padX = 56;
+        const headerH = 250;
+        const footerH = 165;
+        const H = headerH + (rows * cardH) + ((rows - 1) * gapY) + footerH;
+
+        canvas.width = W;
+        canvas.height = H;
+
+        // Background Utama
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+        bgGrad.addColorStop(0, '#eef5ff');
+        bgGrad.addColorStop(1, '#f8fafc');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Card Kontainer Putih Besar
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 2;
+        roundRect(ctx, 32, 32, W - 64, H - 64, 36);
+        ctx.fill();
+        ctx.stroke();
+
+        // Ikon Brand Atas
+        const iconGrad = ctx.createLinearGradient(W/2 - 32, 60, W/2 + 32, 124);
+        iconGrad.addColorStop(0, '#2563eb');
+        iconGrad.addColorStop(1, '#4f46e5');
+        ctx.fillStyle = iconGrad;
+        roundRect(ctx, W/2 - 32, 58, 64, 64, 18);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 30px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('A', W/2, 101);
+
+        // Judul Brand
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '800 40px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('ARBI SHOP', W/2, 165);
+
+        // Pill Subjudul
+        ctx.fillStyle = '#eff6ff';
+        ctx.strokeStyle = '#bfdbfe';
+        ctx.lineWidth = 1.5;
+        roundRect(ctx, W/2 - 165, 178, 330, 32, 16);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#1d4ed8';
+        ctx.font = '700 15px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('OFFICIAL PRICE LIST PREMIUM', W/2, 199);
+
+        ctx.fillStyle = '#64748b';
+        ctx.font = '600 16px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('Akun Premium Berkualitas  •  Proses Kilat  •  Terpercaya', W/2, 232);
+
+        // Grid Produk (2 Kolom)
+        const cardW = (W - (padX * 2) - gapX) / 2;
+
+        products.forEach((item, idx) => {
+          const col = idx % cols;
+          const row = Math.floor(idx / cols);
+          const x = padX + col * (cardW + gapX);
+          const y = headerH + row * (cardH + gapY);
+          const isAvail = item.available !== false;
+
+          // Box Produk
+          ctx.fillStyle = isAvail ? '#ffffff' : '#f8fafc';
+          ctx.strokeStyle = item.highlight ? '#f59e0b' : '#e2e8f0';
+          ctx.lineWidth = item.highlight ? 2.5 : 1.8;
+          roundRect(ctx, x, y, cardW, cardH, 20);
+          ctx.fill();
+          ctx.stroke();
+
+          // Avatar Warna Aplikasi
+          ctx.fillStyle = getBrandHex(item.iconBg);
+          roundRect(ctx, x + 16, y + 21, 56, 56, 14);
+          ctx.fill();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '800 22px "Plus Jakarta Sans", sans-serif';
+          ctx.textAlign = 'center';
+          const letter = item.name.trim().charAt(0).toUpperCase();
+          ctx.fillText(letter, x + 44, y + 57);
+
+          // Nama Aplikasi
+          ctx.textAlign = 'left';
+          ctx.fillStyle = isAvail ? '#0f172a' : '#94a3b8';
+          ctx.font = '700 19px "Plus Jakarta Sans", sans-serif';
+          let dispName = item.name;
+          if (dispName.length > 22) dispName = dispName.substring(0, 20) + '...';
+          ctx.fillText(dispName, x + 86, y + 44);
+
+          // Durasi
+          ctx.fillStyle = '#64748b';
+          ctx.font = '600 15px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText(item.duration, x + 86, y + 68);
+
+          // Badge Promo! atau Habis di samping durasi
+          let badgeOffset = x + 86 + ctx.measureText(item.duration).width + 10;
+          if (item.highlight) {
+            ctx.fillStyle = '#f59e0b';
+            roundRect(ctx, badgeOffset, y + 53, 62, 20, 6);
+            ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 11px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Promo!', badgeOffset + 31, y + 67);
+            badgeOffset += 68;
+          }
+          if (!isAvail) {
+            ctx.fillStyle = '#fee2e2';
+            roundRect(ctx, badgeOffset, y + 53, 54, 20, 6);
+            ctx.fill();
+            ctx.fillStyle = '#e11d48';
+            ctx.font = '800 11px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('HABIS', badgeOffset + 27, y + 67);
+          }
+
+          // Harga di Kanan
+          ctx.textAlign = 'right';
+          ctx.fillStyle = isAvail ? '#0f172a' : '#94a3b8';
+          ctx.font = '700 24px "Space Grotesk", monospace';
+          ctx.fillText(item.price, x + cardW - 18, y + 46);
+
+          // Badge Garansi di Kanan Bawah
+          const garText = item.garansi ? 'Garansi' : 'Tanpa Garansi';
+          ctx.font = '700 12px "Plus Jakarta Sans", sans-serif';
+          const garW = ctx.measureText(garText).width + 20;
+          const garX = x + cardW - 18 - garW;
+          const garY = y + 55;
+
+          ctx.fillStyle = item.garansi ? '#ecfdf5' : '#f1f5f9';
+          ctx.strokeStyle = item.garansi ? '#a7f3d0' : '#e2e8f0';
+          ctx.lineWidth = 1;
+          roundRect(ctx, garX, garY, garW, 22, 11);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = item.garansi ? '#059669' : '#64748b';
+          ctx.textAlign = 'center';
+          ctx.fillText(garText, garX + garW / 2, garY + 15);
+        });
+
+        // Footer Info & Kontak
+        const footY = H - footerH + 28;
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(padX, footY);
+        ctx.lineTo(W - padX, footY);
+        ctx.stroke();
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '700 18px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('Order & Info Stok via WhatsApp: 0857-0327-5372', W/2, footY + 38);
+
+        ctx.fillStyle = '#2563eb';
+        ctx.font = '600 15px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('Pembayaran: QRIS All Payment  •  BCA  •  GoPay  •  DANA  •  OVO  •  ShopeePay', W/2, footY + 66);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '500 13px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('Tanyakan stok sebelum transfer  •  hargaarbishop.vercel.app', W/2, footY + 94);
 
         const link = document.createElement('a');
-        link.download = 'ARBI-SHOP-PRICELIST.png';
+        link.download = 'PRICELIST-ARBI-SHOP.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
-        showToast("Pricelist berhasil didownload!");
-      }).catch(() => {
-        if (toolbar) toolbar.style.display = 'block';
-        if (topButtons) topButtons.style.display = 'grid';
+        showToast("Poster Pricelist HD berhasil didownload!");
+      } catch (err) {
+        alert("Gagal membuat poster: " + err.message);
+      } finally {
         btnText.innerText = originalText;
-        lucide.createIcons();
-        alert("Gagal membuat gambar, silakan gunakan screenshot manual.");
-      });
+      }
     }
 
     function showToast(msg) {
