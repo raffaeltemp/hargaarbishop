@@ -12,6 +12,7 @@
 
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -21,19 +22,30 @@
         }
       }
     }
+
+    // Inisialisasi tema lebih awal agar tidak berkedip (flash) saat loading
+    if (localStorage.getItem('arbi_theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
   </script>
   <style>
     body {
       background: radial-gradient(circle at 50% 0%, #f1f7fe 0%, #f8fafc 100%);
       min-height: 100vh;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    html.dark body {
+      background: radial-gradient(circle at 50% 0%, #0f172a 0%, #020617 100%);
     }
     .badge-garansi { background-color: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
     .badge-nogar { background-color: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+    html.dark .badge-garansi { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    html.dark .badge-nogar { background-color: #1e293b; color: #94a3b8; border: 1px solid #334155; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="text-slate-800 antialiased py-4 px-3 sm:px-6 sm:py-6 pb-28">
+<body class="text-slate-800 dark:text-slate-100 antialiased py-4 px-3 sm:px-6 sm:py-6 pb-28">
 
   <div class="max-w-xl mx-auto">
 
@@ -95,38 +107,43 @@
     </div>
 
     <!-- MAIN PRICELIST CARD -->
-    <div id="priceCard" class="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-slate-200/90 overflow-hidden p-4 sm:p-7">
+    <div id="priceCard" class="relative bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl shadow-lg border border-slate-200/90 dark:border-slate-800 overflow-hidden p-4 sm:p-7 transition-colors duration-200">
       
+      <!-- Tombol Toggle Dark / Light Mode -->
+      <button onclick="toggleTheme()" id="themeToggleBtn" class="absolute top-4 right-4 sm:top-6 sm:right-6 w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-amber-400 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center transition active:scale-90" title="Ganti Tema Terang / Gelap">
+        <i id="themeIcon" data-lucide="moon" class="w-4 h-4"></i>
+      </button>
+
       <!-- Brand Header (Ketuk 5x ikon tas untuk buka Admin Mode) -->
-      <div class="text-center pb-4 sm:pb-6 border-b border-slate-100">
+      <div class="text-center pb-4 sm:pb-6 border-b border-slate-100 dark:border-slate-800">
         <div onclick="handleLogoTap()" class="cursor-pointer select-none inline-flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-md shadow-blue-500/20 mb-2 active:scale-90 transition">
           <i data-lucide="shopping-bag" class="w-6 h-6"></i>
         </div>
-        <h1 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900">ARBI SHOP</h1>
-        <div class="inline-block mt-1 px-3 py-0.5 rounded-full bg-blue-50 border border-blue-200/60">
-          <p class="text-[10px] sm:text-xs font-bold text-blue-700 tracking-wider uppercase">Official Price List Premium</p>
+        <h1 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">ARBI SHOP</h1>
+        <div class="inline-block mt-1 px-3 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-800/60">
+          <p class="text-[10px] sm:text-xs font-bold text-blue-700 dark:text-blue-400 tracking-wider uppercase">Official Price List Premium</p>
         </div>
-        <p class="text-[11px] sm:text-xs text-slate-500 mt-1.5 font-medium">Akun Premium Berkualitas • Proses Kilat • Terpercaya</p>
+        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1.5 font-medium">Akun Premium Berkualitas • Proses Kilat • Terpercaya</p>
       </div>
 
       <!-- Quick Action Buttons -->
       <div id="topActionButtons" class="grid grid-cols-3 gap-2 mt-4 mb-3">
-        <button onclick="openPaymentModal()" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 hover:border-blue-200 text-slate-700 hover:text-blue-600 transition active:scale-95 group">
-          <div class="w-6 h-6 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition">
+        <button onclick="openPaymentModal()" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-blue-50 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-blue-200 text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition active:scale-95 group">
+          <div class="w-6 h-6 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition">
             <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
           </div>
           <span class="text-[10px] sm:text-[11px] font-bold text-center leading-tight">Payment Method</span>
         </button>
 
-        <a href="https://wa.me/6285703275372?text=Halo%20admin%20arbishop,%20saya%20mau%20order%20aplikasi%20premium" target="_blank" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-200 text-slate-700 hover:text-emerald-600 transition active:scale-95 group">
-          <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
+        <a href="https://wa.me/6285703275372?text=Halo%20admin%20arbishop,%20saya%20mau%20order%20aplikasi%20premium" target="_blank" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-emerald-50 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-emerald-200 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition active:scale-95 group">
+          <div class="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
             <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
           </div>
           <span class="text-[10px] sm:text-[11px] font-bold text-center leading-tight">Hubungi Admin</span>
         </a>
 
-        <button onclick="downloadPoster()" id="btnDownload" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50 border border-slate-200/80 hover:border-indigo-200 text-slate-700 hover:text-indigo-600 transition active:scale-95 group">
-          <div class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
+        <button onclick="downloadPoster()" id="btnDownload" class="flex flex-col items-center justify-center gap-1 p-2 sm:py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-indigo-50 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-200 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition active:scale-95 group">
+          <div class="w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
           </div>
           <span id="btnDownloadText" class="text-[10px] sm:text-[11px] font-bold text-center leading-tight">Download Pricelist</span>
@@ -138,35 +155,33 @@
         <!-- Search Input -->
         <div class="relative">
           <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input type="text" id="searchInput" oninput="filterItems()" placeholder="Cari layanan (Netflix, YouTube, Canva...)" class="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-slate-50/50">
+          <input type="text" id="searchInput" oninput="filterItems()" placeholder="Cari layanan (Netflix, YouTube, Canva...)" class="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-slate-50/50 dark:bg-slate-800/80 text-slate-800 dark:text-slate-100 placeholder:text-slate-400">
         </div>
         
         <!-- BARIS 1: Kategori Aplikasi -->
         <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-[11px] no-scrollbar">
           <button onclick="setCategory('all', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-bold bg-blue-600 text-white transition shadow-sm">Semua</button>
-          <button onclick="setCategory('movie', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Film</button>
-          <button onclick="setCategory('music', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Musik</button>
-          <button onclick="setCategory('creative', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Editing</button>
+          <button onclick="setCategory('movie', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Film</button>
+          <button onclick="setCategory('music', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Musik</button>
+          <button onclick="setCategory('creative', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">Editing</button>
         </div>
 
         <!-- BARIS 2: Filter Spesial (Promo & Garansi) + Urutkan Harga -->
-        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
-          <!-- Filter Pills (Bisa dikombinasikan dengan Kategori di atas) -->
+        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
           <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            <button id="btnFilterPromo" onclick="togglePromoFilter()" class="whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-200 bg-amber-50/70 text-amber-700 hover:bg-amber-100 transition flex items-center gap-1">
+            <button id="btnFilterPromo" onclick="togglePromoFilter()" class="whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-200 dark:border-amber-800/60 bg-amber-50/70 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 hover:bg-amber-100 transition flex items-center gap-1">
               <span>🔥 Promo!</span>
             </button>
-            <button id="btnFilterGaransi" onclick="setWarrantyFilter('garansi')" class="whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition">
+            <button id="btnFilterGaransi" onclick="setWarrantyFilter('garansi')" class="whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition">
               🛡️ Garansi
             </button>
-            <button id="btnFilterNogar" onclick="setWarrantyFilter('nogaransi')" class="whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition">
+            <button id="btnFilterNogar" onclick="setWarrantyFilter('nogaransi')" class="whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition">
               Tanpa Garansi
             </button>
           </div>
 
-          <!-- Dropdown Urutkan Harga -->
           <div class="shrink-0">
-            <select id="sortSelect" onchange="filterItems()" class="px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer">
+            <select id="sortSelect" onchange="filterItems()" class="px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer">
               <option value="default">↕️ Urutkan</option>
               <option value="asc">Termurah ↑</option>
               <option value="desc">Termahal ↓</option>
@@ -179,38 +194,38 @@
       <div id="productList" class="space-y-2"></div>
 
       <!-- Footer Info -->
-      <div class="mt-5 pt-4 border-t border-dashed border-slate-200 text-center space-y-1.5">
-        <div class="flex items-center justify-center gap-3 text-[11px] font-semibold text-slate-600 flex-wrap">
-          <span class="inline-flex items-center gap-1 text-emerald-600">
+      <div class="mt-5 pt-4 border-t border-dashed border-slate-200 dark:border-slate-800 text-center space-y-1.5">
+        <div class="flex items-center justify-center gap-3 text-[11px] font-semibold text-slate-600 dark:text-slate-400 flex-wrap">
+          <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
             <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Garansi Sesuai Durasi
           </span>
-          <span class="inline-flex items-center gap-1 text-blue-600">
+          <span class="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
             <i data-lucide="zap" class="w-3.5 h-3.5"></i> Akun Aman & Cepat
           </span>
-          <span class="inline-flex items-center gap-1 text-amber-600">
+          <span class="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
             <i data-lucide="info" class="w-3.5 h-3.5"></i> Tanyakan Stok Sebelum Transfer
           </span>
         </div>
-        <p class="text-[10px] text-slate-400">Harga dapat berubah sewaktu-waktu sesuai ketentuan provider.</p>
+        <p class="text-[10px] text-slate-400 dark:text-slate-500">Harga dapat berubah sewaktu-waktu sesuai ketentuan provider.</p>
       </div>
 
     </div>
 
     <div class="mt-3 text-center">
-      <p class="text-[11px] text-slate-400">© ARBI SHOP • All rights reserved</p>
+      <p class="text-[11px] text-slate-400 dark:text-slate-500">© ARBI SHOP • All rights reserved</p>
     </div>
 
   </div>
 
   <!-- FLOATING ACTION BUTTONS -->
   <div class="fixed bottom-4 right-3 sm:right-5 z-40 flex flex-col items-end gap-2">
-    <button onclick="openPaymentModal()" class="flex items-center gap-2 bg-white/95 backdrop-blur hover:bg-slate-50 text-slate-800 px-3.5 py-2 rounded-full shadow-md border border-slate-200 transition transform active:scale-95">
-      <span class="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+    <button onclick="openPaymentModal()" class="flex items-center gap-2 bg-white/95 dark:bg-slate-800/95 backdrop-blur hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 px-3.5 py-2 rounded-full shadow-md border border-slate-200 dark:border-slate-700 transition transform active:scale-95">
+      <span class="w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
         <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
       </span>
       <div class="text-left">
         <p class="text-[9px] text-slate-400 font-medium leading-none">Bayar Cepat</p>
-        <p class="text-[11px] font-bold text-slate-900 leading-tight">QRIS & Rekening</p>
+        <p class="text-[11px] font-bold text-slate-900 dark:text-white leading-tight">QRIS & Rekening</p>
       </div>
     </button>
 
@@ -226,61 +241,61 @@
 
   <!-- POPUP MODAL PEMBAYARAN -->
   <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3.5 transition-opacity duration-300">
-    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 overflow-hidden" id="modalCard">
-      <div class="flex items-center justify-between p-3.5 border-b border-slate-100 bg-slate-50/60">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden" id="modalCard">
+      <div class="flex items-center justify-between p-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/50">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center">
             <i data-lucide="wallet" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="text-xs sm:text-sm font-bold text-slate-900 leading-tight">Metode Pembayaran</h3>
+            <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">Metode Pembayaran</h3>
             <p class="text-[10px] text-slate-400">QRIS, Transfer Bank & E-Wallet</p>
           </div>
         </div>
-        <button onclick="closePaymentModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
+        <button onclick="closePaymentModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center transition">
           <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
 
       <div class="p-3.5 space-y-3 max-h-[75vh] overflow-y-auto">
-        <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start gap-2">
-          <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-          <p class="text-[11px] font-bold text-amber-800 leading-tight">
+        <div class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 flex items-start gap-2">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
+          <p class="text-[11px] font-bold text-amber-800 dark:text-amber-300 leading-tight">
             Wajib tanyakan stok akun ke WhatsApp sebelum melakukan transfer!
           </p>
         </div>
 
-        <div class="p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 text-center">
+        <div class="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-center">
           <div class="max-w-[210px] mx-auto bg-white p-1 rounded-xl border border-slate-200 shadow-sm mb-2">
             <img src="qris.jpg" alt="QRIS RaffaelArbi" class="w-full h-auto rounded-lg object-contain">
           </div>
-          <span class="text-xs font-bold text-slate-800 block">QRIS All Payment</span>
-          <span class="text-[10px] text-slate-500 block">BCA, Mandiri, BRI, GoPay, DANA, OVO, ShopeePay</span>
+          <span class="text-xs font-bold text-slate-800 dark:text-slate-100 block">QRIS All Payment</span>
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 block">BCA, Mandiri, BRI, GoPay, DANA, OVO, ShopeePay</span>
           <p class="text-[9px] text-slate-400 mt-0.5 italic">Klik & tahan gambar di HP untuk simpan QRIS</p>
         </div>
 
         <div class="space-y-2">
-          <div class="p-2.5 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-between">
+          <div class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/70 shadow-sm flex items-center justify-between">
             <div>
               <div class="flex items-center gap-1.5">
-                <span class="text-xs font-bold text-slate-800">Bank BCA</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Bank BCA</span>
                 <span class="text-[9px] text-slate-400">A/N Raffael Arbi</span>
               </div>
-              <span class="font-mono text-xs font-bold text-slate-700">5860434051</span>
+              <span class="font-mono text-xs font-bold text-slate-700 dark:text-slate-300">5860434051</span>
             </div>
-            <button onclick="copyText('5860434051', 'Nomor rekening BCA disalin!')" class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 text-[11px] font-bold transition active:scale-95">
+            <button onclick="copyText('5860434051', 'Nomor rekening BCA disalin!')" class="px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[11px] font-bold transition active:scale-95">
               Salin
             </button>
           </div>
 
-          <div class="p-2.5 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-between">
+          <div class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/70 shadow-sm flex items-center justify-between">
             <div>
               <div class="flex items-center gap-1.5">
-                <span class="text-[11px] font-bold text-slate-800">GoPay / DANA / OVO / ShopeePay</span>
+                <span class="text-[11px] font-bold text-slate-800 dark:text-slate-100">GoPay / DANA / OVO / ShopeePay</span>
               </div>
-              <span class="font-mono text-xs font-bold text-slate-700">0857-0327-5372</span>
+              <span class="font-mono text-xs font-bold text-slate-700 dark:text-slate-300">0857-0327-5372</span>
             </div>
-            <button onclick="copyText('085703275372', 'Nomor E-Wallet disalin!')" class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 text-[11px] font-bold transition active:scale-95">
+            <button onclick="copyText('085703275372', 'Nomor E-Wallet disalin!')" class="px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 hover:bg-blue-100 text-[11px] font-bold transition active:scale-95">
               Salin
             </button>
           </div>
@@ -289,7 +304,7 @@
         <p class="text-[10px] text-slate-400 text-center italic">*Kirim bukti transfer ke WhatsApp setelah melakukan pembayaran.</p>
       </div>
 
-      <div class="p-3 border-t border-slate-100 bg-slate-50/60 space-y-1.5">
+      <div class="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/50 space-y-1.5">
         <a href="https://wa.me/6285703275372?text=Halo%20admin%20arbishop,%20saya%20sudah%20transfer%20untuk%20order%20aplikasi%20premium" target="_blank" class="w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition">
           <i data-lucide="send" class="w-3.5 h-3.5"></i>
           <span>Konfirmasi Pembayaran ke WA</span>
@@ -299,7 +314,7 @@
   </div>
 
   <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-20 right-4 bg-slate-900 text-white text-[11px] font-semibold px-3.5 py-2 rounded-xl shadow-xl opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 flex items-center gap-2 z-50">
+  <div id="toast" class="fixed bottom-20 right-4 bg-slate-900 dark:bg-slate-800 text-white text-[11px] font-semibold px-3.5 py-2 rounded-xl shadow-xl border border-slate-700 opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 flex items-center gap-2 z-50">
     <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
     <span id="toastMsg">Berhasil disalin!</span>
   </div>
@@ -331,10 +346,27 @@
 
     let currentCategory = 'all';
     let filterPromoOnly = false;
-    let currentWarranty = 'all'; // 'all' | 'garansi' | 'nogaransi'
+    let currentWarranty = 'all';
     let isAdmin = false;
     let tapCount = 0;
     let tapTimer = null;
+
+    function updateThemeIcon() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) {
+        btn.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" class="w-4 h-4"></i>`;
+        lucide.createIcons();
+      }
+    }
+
+    function toggleTheme() {
+      const htmlEl = document.documentElement;
+      const isDark = htmlEl.classList.toggle('dark');
+      localStorage.setItem('arbi_theme', isDark ? 'dark' : 'light');
+      updateThemeIcon();
+      showToast(isDark ? 'Mode Gelap diaktifkan' : 'Mode Terang diaktifkan');
+    }
 
     function handleLogoTap() {
       tapCount++;
@@ -523,9 +555,9 @@
 
       if (items.length === 0) {
         listEl.innerHTML = `
-          <div class="text-center py-8 px-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
-            <p class="text-xs font-bold text-slate-500">Tidak ada produk yang cocok dengan filter ini.</p>
-            <button onclick="resetAllFilters()" class="mt-2 px-3 py-1 rounded-lg bg-blue-50 text-blue-600 text-[11px] font-bold hover:bg-blue-100 transition">Reset Filter</button>
+          <div class="text-center py-8 px-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40">
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Tidak ada produk yang cocok dengan filter ini.</p>
+            <button onclick="resetAllFilters()" class="mt-2 px-3 py-1 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-[11px] font-bold hover:bg-blue-100 transition">Reset Filter</button>
           </div>
         `;
         return;
@@ -534,23 +566,23 @@
       items.forEach(item => {
         const isAvailable = item.available !== false;
         const row = document.createElement('div');
-        row.className = `flex flex-col gap-2 p-2.5 sm:p-3 rounded-xl border border-slate-200/90 bg-white transition hover:border-slate-300 shadow-sm ${!isAvailable ? 'opacity-60 bg-slate-50' : ''}`;
+        row.className = `flex flex-col gap-2 p-2.5 sm:p-3 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-800/60 transition hover:border-slate-300 dark:hover:border-slate-700 shadow-sm ${!isAvailable ? 'opacity-60 bg-slate-50 dark:bg-slate-900' : ''}`;
         const badgeClass = item.garansi ? 'badge-garansi' : 'badge-nogar';
         const msg = encodeURIComponent(`Halo admin arbishop, saya mau order aplikasi premium ${item.name} (${item.duration}) - ${item.price}`);
 
         let adminControls = '';
         if (isAdmin) {
           adminControls = `
-            <div class="flex items-center justify-between gap-1.5 pt-2 border-t border-dashed border-slate-200 text-[10px] flex-wrap">
+            <div class="flex items-center justify-between gap-1.5 pt-2 border-t border-dashed border-slate-200 dark:border-slate-700 text-[10px] flex-wrap">
               <div class="flex items-center gap-1">
                 <span class="text-slate-400 font-semibold">Harga:</span>
-                <input type="text" value="${item.price}" onchange="updateProductField(${item.id}, 'price', this.value)" class="w-16 px-2 py-0.5 rounded border border-slate-300 font-mono font-bold text-slate-900 focus:outline-none focus:border-blue-500">
+                <input type="text" value="${item.price}" onchange="updateProductField(${item.id}, 'price', this.value)" class="w-16 px-2 py-0.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-blue-500">
               </div>
               <div class="flex items-center gap-1 flex-wrap">
-                <button onclick="updateProductField(${item.id}, 'highlight')" class="px-2 py-0.5 rounded font-bold border ${item.highlight ? 'bg-amber-500 text-white border-amber-500' : 'bg-slate-100 text-slate-500 border-slate-200'}">Promo!</button>
-                <button onclick="updateProductField(${item.id}, 'garansi')" class="px-2 py-0.5 rounded font-bold border ${item.garansi ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-100 text-slate-500 border-slate-200'}">Garansi</button>
-                <button onclick="updateProductField(${item.id}, 'available')" class="px-2 py-0.5 rounded font-bold border ${isAvailable ? 'bg-slate-100 text-slate-700 border-slate-200' : 'bg-rose-600 text-white border-rose-600'}">${isAvailable ? 'Ready' : 'Habis'}</button>
-                <button onclick="deleteProduct(${item.id})" class="px-2 py-0.5 rounded font-bold border bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-600 hover:text-white transition" title="Hapus Produk">Hapus</button>
+                <button onclick="updateProductField(${item.id}, 'highlight')" class="px-2 py-0.5 rounded font-bold border ${item.highlight ? 'bg-amber-500 text-white border-amber-500' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700'}">Promo!</button>
+                <button onclick="updateProductField(${item.id}, 'garansi')" class="px-2 py-0.5 rounded font-bold border ${item.garansi ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700'}">Garansi</button>
+                <button onclick="updateProductField(${item.id}, 'available')" class="px-2 py-0.5 rounded font-bold border ${isAvailable ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700' : 'bg-rose-600 text-white border-rose-600'}">${isAvailable ? 'Ready' : 'Habis'}</button>
+                <button onclick="deleteProduct(${item.id})" class="px-2 py-0.5 rounded font-bold border bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800 hover:bg-rose-600 hover:text-white transition" title="Hapus Produk">Hapus</button>
               </div>
             </div>
           `;
@@ -564,22 +596,22 @@
               </div>
               <div class="min-w-0">
                 <div class="flex items-center gap-1.5 flex-wrap">
-                  <h3 class="text-xs sm:text-sm font-bold text-slate-900 truncate">${item.name}</h3>
+                  <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate">${item.name}</h3>
                   ${item.highlight ? '<span class="px-1.5 py-0.5 rounded-md text-[9px] font-extrabold bg-gradient-to-r from-amber-500 to-orange-500 text-white leading-none shadow-sm">Promo!</span>' : ''}
-                  ${!isAvailable ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 text-rose-600 leading-none">HABIS</span>' : ''}
+                  ${!isAvailable ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 leading-none">HABIS</span>' : ''}
                 </div>
                 <p class="text-[10px] sm:text-xs text-slate-400 font-medium">${item.duration}</p>
               </div>
             </div>
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-              <span class="font-mono text-xs sm:text-sm font-bold text-slate-900">${item.price}</span>
+              <span class="font-mono text-xs sm:text-sm font-bold text-slate-900 dark:text-white">${item.price}</span>
               <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full ${badgeClass} whitespace-nowrap">${item.garansiText}</span>
               ${isAvailable ? `
-                <a href="https://wa.me/${waNumber}?text=${msg}" target="_blank" class="p-1 rounded-lg text-emerald-600 hover:bg-emerald-50 transition" title="Order via WA">
+                <a href="https://wa.me/${waNumber}?text=${msg}" target="_blank" class="p-1 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-700 transition" title="Order via WA">
                   <i data-lucide="message-circle" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                 </a>
               ` : `
-                <span class="p-1 text-slate-300 cursor-not-allowed"><i data-lucide="slash" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i></span>
+                <span class="p-1 text-slate-300 dark:text-slate-600 cursor-not-allowed"><i data-lucide="slash" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i></span>
               `}
             </div>
           </div>
@@ -593,12 +625,10 @@
     function setCategory(cat, e) {
       currentCategory = cat;
       document.querySelectorAll('.cat-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white', 'font-bold', 'shadow-sm');
-        btn.classList.add('bg-slate-100', 'text-slate-600', 'font-semibold');
+        btn.className = "cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition";
       });
       if (e && e.target) {
-        e.target.classList.remove('bg-slate-100', 'text-slate-600', 'font-semibold');
-        e.target.classList.add('bg-blue-600', 'text-white', 'font-bold', 'shadow-sm');
+        e.target.className = "cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-bold bg-blue-600 text-white transition shadow-sm";
       }
       filterItems();
     }
@@ -609,30 +639,31 @@
       if (filterPromoOnly) {
         btn.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-500 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm transition flex items-center gap-1";
       } else {
-        btn.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-200 bg-amber-50/70 text-amber-700 hover:bg-amber-100 transition flex items-center gap-1";
+        btn.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-200 dark:border-amber-800/60 bg-amber-50/70 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 hover:bg-amber-100 transition flex items-center gap-1";
       }
       filterItems();
     }
 
     function setWarrantyFilter(type) {
       if (currentWarranty === type) {
-        currentWarranty = 'all'; // Klik ulang untuk mematikan filter
+        currentWarranty = 'all';
       } else {
         currentWarranty = type;
       }
 
       const btnGar = document.getElementById('btnFilterGaransi');
       const btnNogar = document.getElementById('btnFilterNogar');
+      const inactiveClass = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition";
 
       if (currentWarranty === 'garansi') {
         btnGar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-emerald-600 bg-emerald-600 text-white shadow-sm transition";
-        btnNogar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+        btnNogar.className = inactiveClass;
       } else if (currentWarranty === 'nogaransi') {
-        btnNogar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-slate-700 bg-slate-700 text-white shadow-sm transition";
-        btnGar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+        btnNogar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-slate-700 dark:border-slate-500 bg-slate-700 dark:bg-slate-600 text-white shadow-sm transition";
+        btnGar.className = inactiveClass;
       } else {
-        btnGar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
-        btnNogar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+        btnGar.className = inactiveClass;
+        btnNogar.className = inactiveClass;
       }
 
       filterItems();
@@ -650,13 +681,14 @@
         if (idx === 0) {
           btn.className = "cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-bold bg-blue-600 text-white transition shadow-sm";
         } else {
-          btn.className = "cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+          btn.className = "cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition";
         }
       });
 
-      document.getElementById('btnFilterPromo').className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-200 bg-amber-50/70 text-amber-700 hover:bg-amber-100 transition flex items-center gap-1";
-      document.getElementById('btnFilterGaransi').className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
-      document.getElementById('btnFilterNogar').className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+      const inactiveClass = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition";
+      document.getElementById('btnFilterPromo').className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-200 dark:border-amber-800/60 bg-amber-50/70 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 hover:bg-amber-100 transition flex items-center gap-1";
+      document.getElementById('btnFilterGaransi').className = inactiveClass;
+      document.getElementById('btnFilterNogar').className = inactiveClass;
 
       filterItems();
     }
@@ -707,7 +739,7 @@
       if (e.target === m) closePaymentModal();
     }
 
-    // GENERATOR POSTER HD (2 KOLOM RAPI & ANTI BERANTAKAN)
+    // GENERATOR POSTER HD (MENDUKUNG TEMA TERANG & GELAP)
     function roundRect(ctx, x, y, w, h, r) {
       ctx.beginPath();
       ctx.moveTo(x + r, y);
@@ -749,6 +781,7 @@
           await document.fonts.ready;
         }
 
+        const isDark = document.documentElement.classList.contains('dark');
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
@@ -767,13 +800,18 @@
         canvas.height = H;
 
         const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-        bgGrad.addColorStop(0, '#eef5ff');
-        bgGrad.addColorStop(1, '#f8fafc');
+        if (isDark) {
+          bgGrad.addColorStop(0, '#0f172a');
+          bgGrad.addColorStop(1, '#020617');
+        } else {
+          bgGrad.addColorStop(0, '#eef5ff');
+          bgGrad.addColorStop(1, '#f8fafc');
+        }
         ctx.fillStyle = bgGrad;
         ctx.fillRect(0, 0, W, H);
 
-        ctx.fillStyle = '#ffffff';
-        ctx.strokeStyle = '#e2e8f0';
+        ctx.fillStyle = isDark ? '#0f172a' : '#ffffff';
+        ctx.strokeStyle = isDark ? '#1e293b' : '#e2e8f0';
         ctx.lineWidth = 2;
         roundRect(ctx, 32, 32, W - 64, H - 64, 36);
         ctx.fill();
@@ -791,22 +829,22 @@
         ctx.textAlign = 'center';
         ctx.fillText('A', W/2, 101);
 
-        ctx.fillStyle = '#0f172a';
+        ctx.fillStyle = isDark ? '#f8fafc' : '#0f172a';
         ctx.font = '800 40px "Plus Jakarta Sans", sans-serif';
         ctx.fillText('ARBI SHOP', W/2, 165);
 
-        ctx.fillStyle = '#eff6ff';
-        ctx.strokeStyle = '#bfdbfe';
+        ctx.fillStyle = isDark ? '#172554' : '#eff6ff';
+        ctx.strokeStyle = isDark ? '#1e3a8a' : '#bfdbfe';
         ctx.lineWidth = 1.5;
         roundRect(ctx, W/2 - 165, 178, 330, 32, 16);
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = '#1d4ed8';
+        ctx.fillStyle = isDark ? '#60a5fa' : '#1d4ed8';
         ctx.font = '700 15px "Plus Jakarta Sans", sans-serif';
         ctx.fillText('OFFICIAL PRICE LIST PREMIUM', W/2, 199);
 
-        ctx.fillStyle = '#64748b';
+        ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
         ctx.font = '600 16px "Plus Jakarta Sans", sans-serif';
         ctx.fillText('Akun Premium Berkualitas  •  Proses Kilat  •  Terpercaya', W/2, 232);
 
@@ -819,8 +857,13 @@
           const y = headerH + row * (cardH + gapY);
           const isAvail = item.available !== false;
 
-          ctx.fillStyle = isAvail ? '#ffffff' : '#f8fafc';
-          ctx.strokeStyle = item.highlight ? '#f59e0b' : '#e2e8f0';
+          if (isDark) {
+            ctx.fillStyle = isAvail ? '#1e293b' : '#0f172a';
+            ctx.strokeStyle = item.highlight ? '#f59e0b' : '#334155';
+          } else {
+            ctx.fillStyle = isAvail ? '#ffffff' : '#f8fafc';
+            ctx.strokeStyle = item.highlight ? '#f59e0b' : '#e2e8f0';
+          }
           ctx.lineWidth = item.highlight ? 2.5 : 1.8;
           roundRect(ctx, x, y, cardW, cardH, 20);
           ctx.fill();
@@ -837,13 +880,13 @@
           ctx.fillText(letter, x + 44, y + 57);
 
           ctx.textAlign = 'left';
-          ctx.fillStyle = isAvail ? '#0f172a' : '#94a3b8';
+          ctx.fillStyle = isAvail ? (isDark ? '#f8fafc' : '#0f172a') : '#64748b';
           ctx.font = '700 19px "Plus Jakarta Sans", sans-serif';
           let dispName = item.name;
           if (dispName.length > 22) dispName = dispName.substring(0, 20) + '...';
           ctx.fillText(dispName, x + 86, y + 44);
 
-          ctx.fillStyle = '#64748b';
+          ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
           ctx.font = '600 15px "Plus Jakarta Sans", sans-serif';
           ctx.fillText(item.duration, x + 86, y + 68);
 
@@ -859,17 +902,17 @@
             badgeOffset += 68;
           }
           if (!isAvail) {
-            ctx.fillStyle = '#fee2e2';
+            ctx.fillStyle = isDark ? '#4c0519' : '#fee2e2';
             roundRect(ctx, badgeOffset, y + 53, 54, 20, 6);
             ctx.fill();
-            ctx.fillStyle = '#e11d48';
+            ctx.fillStyle = isDark ? '#fb7185' : '#e11d48';
             ctx.font = '800 11px "Plus Jakarta Sans", sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText('HABIS', badgeOffset + 27, y + 67);
           }
 
           ctx.textAlign = 'right';
-          ctx.fillStyle = isAvail ? '#0f172a' : '#94a3b8';
+          ctx.fillStyle = isAvail ? (isDark ? '#ffffff' : '#0f172a') : '#64748b';
           ctx.font = '700 24px "Space Grotesk", monospace';
           ctx.fillText(item.price, x + cardW - 18, y + 46);
 
@@ -879,20 +922,25 @@
           const garX = x + cardW - 18 - garW;
           const garY = y + 55;
 
-          ctx.fillStyle = item.garansi ? '#ecfdf5' : '#f1f5f9';
-          ctx.strokeStyle = item.garansi ? '#a7f3d0' : '#e2e8f0';
+          if (isDark) {
+            ctx.fillStyle = item.garansi ? '#064e3b' : '#0f172a';
+            ctx.strokeStyle = item.garansi ? '#059669' : '#334155';
+          } else {
+            ctx.fillStyle = item.garansi ? '#ecfdf5' : '#f1f5f9';
+            ctx.strokeStyle = item.garansi ? '#a7f3d0' : '#e2e8f0';
+          }
           ctx.lineWidth = 1;
           roundRect(ctx, garX, garY, garW, 22, 11);
           ctx.fill();
           ctx.stroke();
 
-          ctx.fillStyle = item.garansi ? '#059669' : '#64748b';
+          ctx.fillStyle = item.garansi ? (isDark ? '#34d399' : '#059669') : (isDark ? '#94a3b8' : '#64748b');
           ctx.textAlign = 'center';
           ctx.fillText(garText, garX + garW / 2, garY + 15);
         });
 
         const footY = H - footerH + 28;
-        ctx.strokeStyle = '#e2e8f0';
+        ctx.strokeStyle = isDark ? '#1e293b' : '#e2e8f0';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(padX, footY);
@@ -900,20 +948,20 @@
         ctx.stroke();
 
         ctx.textAlign = 'center';
-        ctx.fillStyle = '#0f172a';
+        ctx.fillStyle = isDark ? '#f8fafc' : '#0f172a';
         ctx.font = '700 18px "Plus Jakarta Sans", sans-serif';
         ctx.fillText('Order & Info Stok via WhatsApp: 0857-0327-5372', W/2, footY + 38);
 
-        ctx.fillStyle = '#2563eb';
+        ctx.fillStyle = isDark ? '#60a5fa' : '#2563eb';
         ctx.font = '600 15px "Plus Jakarta Sans", sans-serif';
         ctx.fillText('Pembayaran: QRIS All Payment  •  BCA  •  GoPay  •  DANA  •  OVO  •  ShopeePay', W/2, footY + 66);
 
-        ctx.fillStyle = '#94a3b8';
+        ctx.fillStyle = '#64748b';
         ctx.font = '500 13px "Plus Jakarta Sans", sans-serif';
         ctx.fillText('Tanyakan stok sebelum transfer  •  hargaarbishop.vercel.app', W/2, footY + 94);
 
         const link = document.createElement('a');
-        link.download = 'PRICELIST-ARBI-SHOP.png';
+        link.download = `PRICELIST-ARBI-SHOP-${isDark ? 'DARK' : 'LIGHT'}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
         showToast("Poster Pricelist HD berhasil didownload!");
@@ -932,7 +980,7 @@
     }
 
     renderList(products);
-    lucide.createIcons();
+    updateThemeIcon();
   </script>
 </body>
 </html>
