@@ -29,6 +29,8 @@
     }
     .badge-garansi { background-color: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
     .badge-nogar { background-color: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="text-slate-800 antialiased py-4 px-3 sm:px-6 sm:py-6 pb-28">
@@ -131,20 +133,45 @@
         </button>
       </div>
 
-      <!-- Quick Search & Category Filters -->
+      <!-- Quick Search & Separated Filters -->
       <div class="mb-4 space-y-2.5" id="toolbarSection">
+        <!-- Search Input -->
         <div class="relative">
           <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
           <input type="text" id="searchInput" oninput="filterItems()" placeholder="Cari layanan (Netflix, YouTube, Canva...)" class="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-slate-50/50">
         </div>
         
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] no-scrollbar">
-          <button onclick="setCategory('all', event)" class="cat-btn active whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-blue-600 text-white transition">Semua</button>
-          <button onclick="setCategory('movie', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Film</button>
-          <button onclick="setCategory('music', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Musik</button>
-          <button onclick="setCategory('creative', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Editing</button>
-          <button onclick="setCategory('garansi', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Garansi</button>
-          <button onclick="setCategory('nogaransi', event)" class="cat-btn whitespace-nowrap px-2.5 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Tanpa Garansi</button>
+        <!-- BARIS 1: Kategori Aplikasi -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-[11px] no-scrollbar">
+          <button onclick="setCategory('all', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-bold bg-blue-600 text-white transition shadow-sm">Semua</button>
+          <button onclick="setCategory('movie', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Film</button>
+          <button onclick="setCategory('music', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Musik</button>
+          <button onclick="setCategory('creative', event)" class="cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Editing</button>
+        </div>
+
+        <!-- BARIS 2: Filter Spesial (Promo & Garansi) + Urutkan Harga -->
+        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+          <!-- Filter Pills (Bisa dikombinasikan dengan Kategori di atas) -->
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+            <button id="btnFilterPromo" onclick="togglePromoFilter()" class="whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-200 bg-amber-50/70 text-amber-700 hover:bg-amber-100 transition flex items-center gap-1">
+              <span>🔥 Promo!</span>
+            </button>
+            <button id="btnFilterGaransi" onclick="setWarrantyFilter('garansi')" class="whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition">
+              🛡️ Garansi
+            </button>
+            <button id="btnFilterNogar" onclick="setWarrantyFilter('nogaransi')" class="whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition">
+              Tanpa Garansi
+            </button>
+          </div>
+
+          <!-- Dropdown Urutkan Harga -->
+          <div class="shrink-0">
+            <select id="sortSelect" onchange="filterItems()" class="px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer">
+              <option value="default">↕️ Urutkan</option>
+              <option value="asc">Termurah ↑</option>
+              <option value="desc">Termahal ↓</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -285,205 +312,26 @@
 
     /* PRODUCTS_START */
     let products = [
-  {
-    "id": 1,
-    "name": "YouTube Premium",
-    "duration": "1 Bulan",
-    "price": "18K",
-    "type": "music",
-    "garansi": false,
-    "garansiText": "Tanpa Garansi",
-    "highlight": true,
-    "available": true,
-    "iconBg": "bg-red-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z\"/></svg>"
-  },
-  {
-    "id": 2,
-    "name": "Netflix",
-    "duration": "1 Bulan",
-    "price": "38K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": true,
-    "available": true,
-    "iconBg": "bg-slate-900",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-red-600\" viewBox=\"0 0 24 24\"><path d=\"M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z\"/></svg>"
-  },
-  {
-    "id": 3,
-    "name": "CapCut Pro",
-    "duration": "7 Hari",
-    "price": "12K",
-    "type": "creative",
-    "garansi": false,
-    "garansiText": "Tanpa Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-slate-800",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z\"/></svg>"
-  },
-  {
-    "id": 4,
-    "name": "CapCut Pro",
-    "duration": "1 Bulan",
-    "price": "37K",
-    "type": "creative",
-    "garansi": false,
-    "garansiText": "Tanpa Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-slate-800",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z\"/></svg>"
-  },
-  {
-    "id": 5,
-    "name": "Viu Premium",
-    "duration": "1 Tahun",
-    "price": "6K",
-    "type": "movie",
-    "garansi": false,
-    "garansiText": "Tanpa Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-amber-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><text x=\"5\" y=\"17\" font-size=\"14\" font-weight=\"bold\" fill=\"white\">V</text></svg>"
-  },
-  {
-    "id": 6,
-    "name": "Canva Pro",
-    "duration": "1 Bulan",
-    "price": "5K",
-    "type": "creative",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-cyan-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"#00c4cc\"/><text x=\"7\" y=\"16\" font-size=\"14\" font-weight=\"bold\" fill=\"white\" font-style=\"italic\">C</text></svg>"
-  },
-  {
-    "id": 7,
-    "name": "Prime Video",
-    "duration": "1 Bulan",
-    "price": "16K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-sky-600",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M3 17.5c4.5 2 9.5 2 14 0M18 16l3 2-1-3.5\"/></svg>"
-  },
-  {
-    "id": 8,
-    "name": "Vidio Platinum (Mobile)",
-    "duration": "1 Bulan",
-    "price": "35K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-rose-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M10 8l6 4-6 4V8z\"/></svg>"
-  },
-  {
-    "id": 9,
-    "name": "Vidio Platinum (All Device)",
-    "duration": "1 Bulan",
-    "price": "45K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-rose-600",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M4 6h16v10H4z M10 8l5 3-5 3z\"/></svg>"
-  },
-  {
-    "id": 10,
-    "name": "WeTV",
-    "duration": "1 Bulan",
-    "price": "30K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-orange-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M12 2L2 22h20L12 2z\"/></svg>"
-  },
-  {
-    "id": 11,
-    "name": "Apple Music (Android)",
-    "duration": "1 Bulan",
-    "price": "10K",
-    "type": "music",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-red-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z\"/></svg>"
-  },
-  {
-    "id": 12,
-    "name": "Spotify Premium",
-    "duration": "1 Bulan",
-    "price": "25K",
-    "type": "music",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-emerald-500",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><path d=\"M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10A10 10 0 0 0 12 2zm4.586 14.424a.623.623 0 0 1-.857.207c-2.348-1.434-5.304-1.758-8.786-.962a.625.625 0 1 1-.277-1.22c3.808-.871 7.077-.497 9.713 1.118a.625.625 0 0 1 .207.857zm1.225-2.723a.782.782 0 0 1-1.076.257c-2.688-1.652-6.785-2.131-9.965-1.166a.782.782 0 1 1-.454-1.498c3.633-1.103 8.147-.568 11.238 1.331a.782.782 0 0 1 .257 1.076zm.105-2.836C14.692 8.94 9.4 8.766 6.342 9.694a.937.937 0 1 1-.543-1.792c3.512-1.066 9.356-.862 13.09 1.356a.937.937 0 0 1-1.002 1.607z\"/></svg>"
-  },
-  {
-    "id": 13,
-    "name": "HBO Ultimate",
-    "duration": "1 Bulan",
-    "price": "55K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-violet-900",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><text x=\"2\" y=\"16\" font-size=\"11\" font-weight=\"900\" fill=\"white\">HBO</text></svg>"
-  },
-  {
-    "id": 14,
-    "name": "HBO Standard",
-    "duration": "1 Bulan",
-    "price": "25K",
-    "type": "movie",
-    "garansi": true,
-    "garansiText": "Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-indigo-900",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><text x=\"2\" y=\"16\" font-size=\"11\" font-weight=\"900\" fill=\"white\">HBO</text></svg>"
-  },
-  {
-    "id": 15,
-    "name": "Capcut",
-    "duration": "40 Days",
-    "price": "40K",
-    "type": "creative",
-    "garansi": false,
-    "garansiText": "Tanpa Garansi",
-    "highlight": false,
-    "available": true,
-    "iconBg": "bg-slate-800",
-    "iconSvg": "<svg class=\"w-3.5 h-3.5 fill-white\" viewBox=\"0 0 24 24\"><text x=\"50%\" y=\"17\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"bold\" fill=\"white\">C</text></svg>"
-  }
-];
+      { id: 1, name: "YouTube Premium", duration: "1 Bulan", price: "18K", type: "music", garansi: false, garansiText: "Tanpa Garansi", highlight: true, available: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>` },
+      { id: 2, name: "Netflix", duration: "1 Bulan", price: "38K", type: "movie", garansi: true, garansiText: "Garansi", highlight: true, available: true, iconBg: "bg-slate-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-red-600" viewBox="0 0 24 24"><path d="M5.398 0v24c1.826-.37 3.555-.845 5.253-1.425V9.458l5.244 14.542h5.303V0h-5.184v14.542L10.702 0H5.398z"/></svg>` },
+      { id: 3, name: "CapCut Pro", duration: "7 Hari", price: "11K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
+      { id: 4, name: "CapCut Pro", duration: "1 Bulan", price: "37K", type: "creative", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-slate-800", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M2.5 7.5L8.5 2.5L14.5 7.5L8.5 12.5L2.5 7.5ZM9.5 16.5L15.5 11.5L21.5 16.5L15.5 21.5L9.5 16.5Z"/></svg>` },
+      { id: 5, name: "Viu Premium", duration: "1 Tahun", price: "5K", type: "movie", garansi: false, garansiText: "Tanpa Garansi", highlight: false, available: true, iconBg: "bg-amber-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="5" y="17" font-size="14" font-weight="bold" fill="white">V</text></svg>` },
+      { id: 6, name: "Canva Pro", duration: "1 Bulan", price: "5K", type: "creative", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-cyan-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#00c4cc"/><text x="7" y="16" font-size="14" font-weight="bold" fill="white" font-style="italic">C</text></svg>` },
+      { id: 7, name: "Prime Video", duration: "1 Bulan", price: "14K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-sky-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M3 17.5c4.5 2 9.5 2 14 0M18 16l3 2-1-3.5"/></svg>` },
+      { id: 8, name: "Vidio Platinum (Mobile)", duration: "1 Bulan", price: "35K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-rose-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M10 8l6 4-6 4V8z"/></svg>` },
+      { id: 9, name: "Vidio Platinum (All Device)", duration: "1 Bulan", price: "45K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-rose-600", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M4 6h16v10H4z M10 8l5 3-5 3z"/></svg>` },
+      { id: 10, name: "WeTV", duration: "1 Bulan", price: "30K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-orange-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/></svg>` },
+      { id: 11, name: "Apple Music (Android)", duration: "1 Bulan", price: "10K", type: "music", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-red-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>` },
+      { id: 12, name: "Spotify Premium", duration: "1 Bulan", price: "25K", type: "music", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-emerald-500", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10A10 10 0 0 0 12 2zm4.586 14.424a.623.623 0 0 1-.857.207c-2.348-1.434-5.304-1.758-8.786-.962a.625.625 0 1 1-.277-1.22c3.808-.871 7.077-.497 9.713 1.118a.625.625 0 0 1 .207.857zm1.225-2.723a.782.782 0 0 1-1.076.257c-2.688-1.652-6.785-2.131-9.965-1.166a.782.782 0 1 1-.454-1.498c3.633-1.103 8.147-.568 11.238 1.331a.782.782 0 0 1 .257 1.076zm.105-2.836C14.692 8.94 9.4 8.766 6.342 9.694a.937.937 0 1 1-.543-1.792c3.512-1.066 9.356-.862 13.09 1.356a.937.937 0 0 1-1.002 1.607z"/></svg>` },
+      { id: 13, name: "HBO Ultimate", duration: "1 Bulan", price: "55K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-violet-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` },
+      { id: 14, name: "HBO Standard", duration: "1 Bulan", price: "25K", type: "movie", garansi: true, garansiText: "Garansi", highlight: false, available: true, iconBg: "bg-indigo-900", iconSvg: `<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><text x="2" y="16" font-size="11" font-weight="900" fill="white">HBO</text></svg>` }
+    ];
     /* PRODUCTS_END */
 
     let currentCategory = 'all';
+    let filterPromoOnly = false;
+    let currentWarranty = 'all'; // 'all' | 'garansi' | 'nogaransi'
     let isAdmin = false;
     let tapCount = 0;
     let tapTimer = null;
@@ -660,9 +508,29 @@
       }
     }
 
+    function parsePriceValue(priceStr) {
+      if (!priceStr) return 0;
+      const clean = priceStr.toString().toUpperCase().replace(/[^0-9.KM]/g, '');
+      let val = parseFloat(clean) || 0;
+      if (clean.includes('K')) val *= 1000;
+      if (clean.includes('M')) val *= 1000000;
+      return val;
+    }
+
     function renderList(items) {
       const listEl = document.getElementById('productList');
       listEl.innerHTML = '';
+
+      if (items.length === 0) {
+        listEl.innerHTML = `
+          <div class="text-center py-8 px-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
+            <p class="text-xs font-bold text-slate-500">Tidak ada produk yang cocok dengan filter ini.</p>
+            <button onclick="resetAllFilters()" class="mt-2 px-3 py-1 rounded-lg bg-blue-50 text-blue-600 text-[11px] font-bold hover:bg-blue-100 transition">Reset Filter</button>
+          </div>
+        `;
+        return;
+      }
+
       items.forEach(item => {
         const isAvailable = item.available !== false;
         const row = document.createElement('div');
@@ -725,26 +593,96 @@
     function setCategory(cat, e) {
       currentCategory = cat;
       document.querySelectorAll('.cat-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white');
-        btn.classList.add('bg-slate-100', 'text-slate-600');
+        btn.classList.remove('bg-blue-600', 'text-white', 'font-bold', 'shadow-sm');
+        btn.classList.add('bg-slate-100', 'text-slate-600', 'font-semibold');
       });
       if (e && e.target) {
-        e.target.classList.remove('bg-slate-100', 'text-slate-600');
-        e.target.classList.add('bg-blue-600', 'text-white');
+        e.target.classList.remove('bg-slate-100', 'text-slate-600', 'font-semibold');
+        e.target.classList.add('bg-blue-600', 'text-white', 'font-bold', 'shadow-sm');
       }
+      filterItems();
+    }
+
+    function togglePromoFilter() {
+      filterPromoOnly = !filterPromoOnly;
+      const btn = document.getElementById('btnFilterPromo');
+      if (filterPromoOnly) {
+        btn.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-500 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm transition flex items-center gap-1";
+      } else {
+        btn.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-200 bg-amber-50/70 text-amber-700 hover:bg-amber-100 transition flex items-center gap-1";
+      }
+      filterItems();
+    }
+
+    function setWarrantyFilter(type) {
+      if (currentWarranty === type) {
+        currentWarranty = 'all'; // Klik ulang untuk mematikan filter
+      } else {
+        currentWarranty = type;
+      }
+
+      const btnGar = document.getElementById('btnFilterGaransi');
+      const btnNogar = document.getElementById('btnFilterNogar');
+
+      if (currentWarranty === 'garansi') {
+        btnGar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-emerald-600 bg-emerald-600 text-white shadow-sm transition";
+        btnNogar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+      } else if (currentWarranty === 'nogaransi') {
+        btnNogar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-slate-700 bg-slate-700 text-white shadow-sm transition";
+        btnGar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+      } else {
+        btnGar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+        btnNogar.className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+      }
+
+      filterItems();
+    }
+
+    function resetAllFilters() {
+      currentCategory = 'all';
+      filterPromoOnly = false;
+      currentWarranty = 'all';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('sortSelect').value = 'default';
+
+      const catBtns = document.querySelectorAll('.cat-btn');
+      catBtns.forEach((btn, idx) => {
+        if (idx === 0) {
+          btn.className = "cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-bold bg-blue-600 text-white transition shadow-sm";
+        } else {
+          btn.className = "cat-btn whitespace-nowrap px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+        }
+      });
+
+      document.getElementById('btnFilterPromo').className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border border-amber-200 bg-amber-50/70 text-amber-700 hover:bg-amber-100 transition flex items-center gap-1";
+      document.getElementById('btnFilterGaransi').className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+      document.getElementById('btnFilterNogar').className = "whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition";
+
       filterItems();
     }
 
     function filterItems() {
       const q = document.getElementById('searchInput').value.toLowerCase().trim();
-      const filtered = products.filter(p => {
-        const match = p.name.toLowerCase().includes(q) || p.duration.toLowerCase().includes(q);
-        if (!match) return false;
-        if (currentCategory === 'all') return true;
-        if (currentCategory === 'garansi') return p.garansi;
-        if (currentCategory === 'nogaransi') return !p.garansi;
-        return p.type === currentCategory;
+      const sortMode = document.getElementById('sortSelect').value;
+
+      let filtered = products.filter(p => {
+        const matchSearch = p.name.toLowerCase().includes(q) || p.duration.toLowerCase().includes(q);
+        if (!matchSearch) return false;
+
+        if (currentCategory !== 'all' && p.type !== currentCategory) return false;
+        if (filterPromoOnly && !p.highlight) return false;
+        if (currentWarranty === 'garansi' && !p.garansi) return false;
+        if (currentWarranty === 'nogaransi' && p.garansi) return false;
+
+        return true;
       });
+
+      if (sortMode === 'asc') {
+        filtered.sort((a, b) => parsePriceValue(a.price) - parsePriceValue(b.price));
+      } else if (sortMode === 'desc') {
+        filtered.sort((a, b) => parsePriceValue(b.price) - parsePriceValue(a.price));
+      }
+
       renderList(filtered);
     }
 
@@ -828,14 +766,12 @@
         canvas.width = W;
         canvas.height = H;
 
-        // Background Utama
         const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
         bgGrad.addColorStop(0, '#eef5ff');
         bgGrad.addColorStop(1, '#f8fafc');
         ctx.fillStyle = bgGrad;
         ctx.fillRect(0, 0, W, H);
 
-        // Card Kontainer Putih Besar
         ctx.fillStyle = '#ffffff';
         ctx.strokeStyle = '#e2e8f0';
         ctx.lineWidth = 2;
@@ -843,7 +779,6 @@
         ctx.fill();
         ctx.stroke();
 
-        // Ikon Brand Atas
         const iconGrad = ctx.createLinearGradient(W/2 - 32, 60, W/2 + 32, 124);
         iconGrad.addColorStop(0, '#2563eb');
         iconGrad.addColorStop(1, '#4f46e5');
@@ -856,12 +791,10 @@
         ctx.textAlign = 'center';
         ctx.fillText('A', W/2, 101);
 
-        // Judul Brand
         ctx.fillStyle = '#0f172a';
         ctx.font = '800 40px "Plus Jakarta Sans", sans-serif';
         ctx.fillText('ARBI SHOP', W/2, 165);
 
-        // Pill Subjudul
         ctx.fillStyle = '#eff6ff';
         ctx.strokeStyle = '#bfdbfe';
         ctx.lineWidth = 1.5;
@@ -877,7 +810,6 @@
         ctx.font = '600 16px "Plus Jakarta Sans", sans-serif';
         ctx.fillText('Akun Premium Berkualitas  •  Proses Kilat  •  Terpercaya', W/2, 232);
 
-        // Grid Produk (2 Kolom)
         const cardW = (W - (padX * 2) - gapX) / 2;
 
         products.forEach((item, idx) => {
@@ -887,7 +819,6 @@
           const y = headerH + row * (cardH + gapY);
           const isAvail = item.available !== false;
 
-          // Box Produk
           ctx.fillStyle = isAvail ? '#ffffff' : '#f8fafc';
           ctx.strokeStyle = item.highlight ? '#f59e0b' : '#e2e8f0';
           ctx.lineWidth = item.highlight ? 2.5 : 1.8;
@@ -895,7 +826,6 @@
           ctx.fill();
           ctx.stroke();
 
-          // Avatar Warna Aplikasi
           ctx.fillStyle = getBrandHex(item.iconBg);
           roundRect(ctx, x + 16, y + 21, 56, 56, 14);
           ctx.fill();
@@ -906,7 +836,6 @@
           const letter = item.name.trim().charAt(0).toUpperCase();
           ctx.fillText(letter, x + 44, y + 57);
 
-          // Nama Aplikasi
           ctx.textAlign = 'left';
           ctx.fillStyle = isAvail ? '#0f172a' : '#94a3b8';
           ctx.font = '700 19px "Plus Jakarta Sans", sans-serif';
@@ -914,12 +843,10 @@
           if (dispName.length > 22) dispName = dispName.substring(0, 20) + '...';
           ctx.fillText(dispName, x + 86, y + 44);
 
-          // Durasi
           ctx.fillStyle = '#64748b';
           ctx.font = '600 15px "Plus Jakarta Sans", sans-serif';
           ctx.fillText(item.duration, x + 86, y + 68);
 
-          // Badge Promo! atau Habis di samping durasi
           let badgeOffset = x + 86 + ctx.measureText(item.duration).width + 10;
           if (item.highlight) {
             ctx.fillStyle = '#f59e0b';
@@ -941,13 +868,11 @@
             ctx.fillText('HABIS', badgeOffset + 27, y + 67);
           }
 
-          // Harga di Kanan
           ctx.textAlign = 'right';
           ctx.fillStyle = isAvail ? '#0f172a' : '#94a3b8';
           ctx.font = '700 24px "Space Grotesk", monospace';
           ctx.fillText(item.price, x + cardW - 18, y + 46);
 
-          // Badge Garansi di Kanan Bawah
           const garText = item.garansi ? 'Garansi' : 'Tanpa Garansi';
           ctx.font = '700 12px "Plus Jakarta Sans", sans-serif';
           const garW = ctx.measureText(garText).width + 20;
@@ -966,7 +891,6 @@
           ctx.fillText(garText, garX + garW / 2, garY + 15);
         });
 
-        // Footer Info & Kontak
         const footY = H - footerH + 28;
         ctx.strokeStyle = '#e2e8f0';
         ctx.lineWidth = 1.5;
